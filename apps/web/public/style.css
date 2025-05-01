@@ -1,0 +1,19 @@
+html, body {
+  background-color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+#app {
+  height: 100dvh;
+  width: 100dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pixi-container {
+  height: 90dvh;
+  width: calc(90dvh * 9 / 19.5);
+  aspect-ratio: 9 / 19.5;
+}

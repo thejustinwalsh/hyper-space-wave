@@ -1,0 +1,37 @@
+{
+  "name": "@hyper-space-wave/core",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "peerDependencies": {
+    "@pixi/react": "8.0.0-beta.16",
+    "pixi.js": "^8.2.6",
+    "react": "18.3.1"
+  },
+  "devDependencies": {
+    "@hyper-space-wave/assets": "workspace:*",
+    "@pixi/react": "8.0.0-beta.16",
+    "pixi.js": "^8.2.6",
+    "react": "18.3.1"
+  },
+  "dependencies": {
+    "@types/react": "18.3.1",
+    "@zod/mini": "4.0.0-beta.20250424T163858",
+    "koota": "^0.3.0",
+    "stats.js": "^0.17.0"
+  }
+}

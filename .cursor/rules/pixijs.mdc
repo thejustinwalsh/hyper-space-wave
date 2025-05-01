@@ -1,0 +1,260 @@
+---
+description: This rule provides comprehensive best practices, coding standards, and guidelines for developing projects using the PixiJS library, covering code organization, performance, security, testing, and common pitfalls.
+globs: **/*.{js,ts,jsx,tsx,html}
+---
+# PixiJS Best Practices and Coding Standards
+
+This document outlines best practices for developing projects using PixiJS, a 2D rendering engine. Following these guidelines will lead to more maintainable, performant, and robust applications.
+
+## 1. Code Organization and Structure
+
+### 1.1 Directory Structure
+
+A well-defined directory structure improves code discoverability and maintainability. Here's a recommended structure:
+
+
+project-root/
+├── src/
+│   ├── assets/         # Images, audio, fonts, etc.
+│   ├── components/     # Reusable PixiJS components (e.g., buttons, sprites)
+│   │   ├── Button.ts
+│   │   ├── Sprite.ts
+│   ├── scenes/         # Different game scenes or application states
+│   │   ├── MainMenuScene.ts
+│   │   ├── GameScene.ts
+│   ├── services/       # API clients, data management
+│   │   ├── ApiService.ts
+│   ├── utils/          # Helper functions and utilities
+│   │   ├── MathUtils.ts
+│   ├── core/           # Core PixiJS setup, game loop, and renderer
+│   │   ├── Game.ts
+│   │   ├── Renderer.ts
+│   ├── App.ts          # Main application entry point
+│   └── index.html      # HTML entry point
+├── test/              # Unit, integration, and end-to-end tests
+├── .cursor/           # Cursor specific files
+├── dist/              # Compiled and bundled output
+├── node_modules/      # Node dependencies
+├── package.json        # Project configuration
+├── webpack.config.js  # Webpack configuration (or similar bundler)
+└── tsconfig.json       # TypeScript configuration (if using TypeScript)
+
+
+### 1.2 File Naming Conventions
+
+*   **Components:** Use PascalCase (e.g., `Button.ts`, `GameScene.js`).
+*   **Utilities:** Use camelCase (e.g., `mathUtils.ts`, `apiService.js`).
+*   **Assets:** Use descriptive names with appropriate extensions (e.g., `player_sprite.png`, `background_music.mp3`).
+*   **Main App file**: App.ts or App.js
+
+### 1.3 Module Organization
+
+*   **ES Modules:** Use ES modules (`import`/`export`) for modularity and tree shaking.
+*   **Dependency Injection:** Consider using dependency injection to decouple components and improve testability.
+*   **Avoid Circular Dependencies:** Carefully manage module dependencies to prevent circular references, which can lead to runtime errors.
+
+### 1.4 Component Architecture
+
+*   **Composition over Inheritance:** Favor composition to create complex components from smaller, reusable parts.  This leads to more flexible and maintainable code.
+*   **Container/Presentation Pattern:** Separate data fetching and state management logic from the visual presentation of components.
+*   **Event-Driven Architecture:** Utilize PixiJS's event system to communicate between components and handle user interactions.
+
+### 1.5 Code Splitting
+
+*   **Route-Based Splitting:** Load different parts of your application (e.g., scenes) on demand based on the current route or game state.
+*   **Vendor Splitting:** Separate third-party libraries (PixiJS, etc.) into a separate chunk to improve caching.
+*   **Dynamic Imports:** Use dynamic imports (`import()`) to load modules asynchronously when needed.
+
+## 2. Common Patterns and Anti-patterns
+
+### 2.1 Design Patterns
+
+*   **Factory Pattern:** Use factories to create instances of PixiJS objects, especially when you need to configure them in a specific way.
+*   **Observer Pattern:** Employ the observer pattern for event handling and communication between components. PixiJS provides an event emitter that can be used for this purpose.
+*   **Singleton Pattern:** Use singletons for global resources like the PixiJS application or asset manager, but be cautious about overusing them.
+
+### 2.2 Recommended Approaches
+
+*   **Asset Management:** Use a dedicated asset loader (e.g., PixiJS's `Loader` or `AssetPack`) to manage images, audio, and other resources.
+*   **Object Pooling:**  Reuse existing objects instead of creating new ones to reduce garbage collection overhead, especially for frequently created objects like particles.
+*   **TilingSprite:**  Use `TilingSprite` for large repeating backgrounds to improve performance.
+*   **Use Graphics cautiously**: Graphics objects should be cached as textures where possible for static content.  They are dynamic but expensive.
+*   **ParticleContainers:** Use `ParticleContainer` for rendering large numbers of similar sprites, like particles, as it's more efficient than rendering individual sprites.
+
+### 2.3 Anti-patterns
+
+*   **Global Scope Pollution:** Avoid creating global variables or modifying built-in objects.
+*   **Tight Coupling:** Minimize dependencies between components to improve reusability and testability.
+*   **Premature Optimization:** Don't optimize code before identifying performance bottlenecks.
+*   **Deeply Nested Code:** Avoid excessive nesting of conditional statements or loops, which can make code difficult to read and maintain.
+*   **Ignoring Performance:**  Be mindful of draw calls. Minimize state changes between drawn objects. Don't update every attribute on a display object every frame unless strictly necessary.
+*   **Creating and Destroying Textures Repeatedly:** Load textures once and reuse them.  Creating and destroying textures is an expensive operation.
+
+### 2.4 State Management
+
+*   **Simple State:** For small applications, manage state within components using local variables.
+*   **Centralized State:** For larger applications, use a state management library like Redux, Zustand, or MobX to manage application state in a centralized location.  Context API with `useReducer` is also appropriate for mid-sized applications.
+*   **Immutable Data:** Use immutable data structures to prevent unintended side effects and simplify state updates.
+
+### 2.5 Error Handling
+
+*   **Try-Catch Blocks:** Use `try-catch` blocks to handle potential errors gracefully.
+*   **Error Boundaries (React):** If using React, use error boundaries to catch errors during rendering.
+*   **Logging:** Log errors to the console or a logging service for debugging and monitoring.
+
+## 3. Performance Considerations
+
+### 3.1 Optimization Techniques
+
+*   **Sprite Sheets:** Use sprite sheets to combine multiple images into a single texture, reducing draw calls.
+*   **Texture Atlases:** Similar to sprite sheets, but more flexible for packing various textures together.
+*   **Caching:** Cache frequently used calculations and textures to avoid redundant computations.
+*   **Object Pooling:** Reuse objects to reduce garbage collection overhead.
+*   **WebAssembly (WASM):**  Consider using WASM for computationally intensive tasks.
+*   **Filter Area:** Use `filterArea` on a `Container` to limit the area affected by filters, improving performance.
+*   **Check visibility**: Before performing complex calculations or rendering objects, check if they are within the viewport. If they are not visible, skip rendering them.
+
+### 3.2 Memory Management
+
+*   **Texture Management:** Dispose of textures when they are no longer needed to free up memory.
+*   **Object Lifecycle:** Carefully manage the lifecycle of PixiJS objects to avoid memory leaks.
+*   **Garbage Collection:** Be aware of garbage collection and its impact on performance.
+
+### 3.3 Rendering Optimization
+
+*   **Batching:**  PixiJS automatically batches draw calls where possible.  Minimize state changes (e.g., texture, blend mode) between objects to improve batching.
+*   **Use appropriate renderers**: PixiJS provides both Canvas and WebGL renderers. Choose the renderer that is most appropriate for your target platform and content.
+*   **Masking:** Use masks to limit the visible area of objects, improving performance by reducing the number of pixels that need to be rendered. Be mindful of how you are using Masks as the complex masking could also become a performance concern.
+
+### 3.4 Bundle Size Optimization
+
+*   **Tree Shaking:** Use a bundler like Webpack or Rollup to remove unused code from your bundle.
+*   **Code Minification:** Minify your code to reduce the bundle size.
+*   **Compression:** Compress your bundle using gzip or Brotli.
+*   **Image Optimization:** Optimize images to reduce their file size.
+
+### 3.5 Lazy Loading
+
+*   **Load Assets on Demand:** Load assets only when they are needed, such as when a user enters a specific game scene.
+*   **Scroll-Based Loading:** Load assets as the user scrolls through the screen.
+
+## 4. Security Best Practices
+
+### 4.1 Common Vulnerabilities
+
+*   **Cross-Site Scripting (XSS):**  Prevent XSS attacks by sanitizing user input before rendering it with PixiJS.
+*   **Code Injection:** Avoid using `eval()` or similar functions that can execute arbitrary code.
+*   **Asset Tampering:** Protect your assets from unauthorized modification.
+
+### 4.2 Input Validation
+
+*   **Sanitize User Input:** Sanitize user input before using it in your PixiJS application.
+*   **Validate Data:** Validate data received from external sources.
+
+### 4.3 Authentication and Authorization
+
+*   **Secure Authentication:** Use secure authentication mechanisms to verify user identities.
+*   **Role-Based Access Control:** Implement role-based access control to restrict access to sensitive data and functionality.
+
+### 4.4 Data Protection
+
+*   **Encryption:** Encrypt sensitive data at rest and in transit.
+*   **Data Sanitization:** Sanitize data before storing it to prevent data breaches.
+
+### 4.5 Secure API Communication
+
+*   **HTTPS:** Use HTTPS to encrypt communication between your PixiJS application and your API.
+*   **API Keys:** Protect your API keys and other sensitive credentials.
+
+## 5. Testing Approaches
+
+### 5.1 Unit Testing
+
+*   **Test Individual Components:** Write unit tests to verify the functionality of individual PixiJS components.
+*   **Mock Dependencies:** Use mocking to isolate components during testing.
+
+### 5.2 Integration Testing
+
+*   **Test Interactions:** Write integration tests to verify the interactions between different components.
+*   **Simulate User Behavior:** Simulate user behavior to test the application's overall functionality.
+
+### 5.3 End-to-End Testing
+
+*   **Test Entire Workflow:** Write end-to-end tests to verify the entire user workflow from start to finish.
+*   **Use a Testing Framework:** Use a testing framework like Cypress or Playwright to automate end-to-end tests.
+
+### 5.4 Test Organization
+
+*   **Keep Tests Separate:** Store tests in a separate directory from your source code.
+*   **Organize Tests by Component:** Organize tests by component to improve maintainability.
+
+### 5.5 Mocking and Stubbing
+
+*   **Mock External Dependencies:** Mock external dependencies like API clients or third-party libraries.
+*   **Stub Methods:** Stub methods to control the behavior of components during testing.
+
+## 6. Common Pitfalls and Gotchas
+
+### 6.1 Frequent Mistakes
+
+*   **Not Using Sprite Sheets:** Failing to use sprite sheets, leading to excessive draw calls.
+*   **Incorrect Anchor Points:** Misunderstanding how anchor points affect sprite positioning.
+*   **Leaking Event Listeners:** Forgetting to remove event listeners, leading to memory leaks.
+*   **Updating Textures Every Frame:** Updating textures unnecessarily, impacting performance.
+*   **Not accounting for pixel density**: Not accounting for different pixel densities on different devices, leading to scaling and rendering issues.
+
+### 6.2 Edge Cases
+
+*   **Browser Compatibility:** Testing your application on different browsers to ensure compatibility.
+*   **Device Performance:** Testing your application on different devices to ensure performance.
+*   **Handling Large Textures:**  Properly scaling or tiling large textures to avoid performance issues.
+
+### 6.3 Version-Specific Issues
+
+*   **PixiJS v5 vs. v6/v7/v8:** Be aware of breaking changes between different versions of PixiJS.
+*   **WebGL Compatibility:** Ensure that your application works on devices with different WebGL capabilities.
+
+### 6.4 Compatibility Concerns
+
+*   **React Integration:** Be mindful of the potential performance implications of integrating PixiJS with React.
+*   **Mobile Devices:** Optimize your application for mobile devices with limited resources.
+
+### 6.5 Debugging Strategies
+
+*   **Console Logging:** Use `console.log()` to debug your code.
+*   **Browser Developer Tools:** Use the browser's developer tools to inspect the PixiJS scene graph and identify performance bottlenecks.
+*   **PixiJS Dev Tools:** Use the PixiJS dev tools (when available) to debug and optimize your PixiJS applications.
+
+## 7. Tooling and Environment
+
+### 7.1 Recommended Tools
+
+*   **Code Editor:** VS Code, Sublime Text, or Atom.
+*   **Bundler:** Webpack, Parcel, or Rollup.
+*   **Linter:** ESLint or JSHint.
+*   **Formatter:** Prettier.
+*   **Testing Framework:** Jest, Mocha, or Jasmine.
+*   **PixiJS Dev Tools**: When available, use this as a browser extension for enhanced debugging
+
+### 7.2 Build Configuration
+
+*   **Use a Build System:** Use a build system like Webpack or Parcel to automate the build process.
+*   **Configure Source Maps:** Configure source maps to make debugging easier.
+*   **Optimize for Production:** Optimize your build for production by minifying code and removing debugging information.
+
+### 7.3 Linting and Formatting
+
+*   **Enforce Code Style:** Use a linter and formatter to enforce a consistent code style.
+*   **Automate Formatting:** Automate formatting on save or commit to prevent style inconsistencies.
+
+### 7.4 Deployment
+
+*   **Host Static Files:** Host your static files on a CDN or web server.
+*   **Use HTTPS:** Use HTTPS to encrypt communication between your application and the server.
+
+### 7.5 CI/CD
+
+*   **Automate Testing:** Automate testing on every commit or pull request.
+*   **Automate Deployment:** Automate deployment to your staging and production environments.
+
+By following these best practices, you can build high-quality, performant, and maintainable PixiJS applications.

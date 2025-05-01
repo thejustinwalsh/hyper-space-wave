@@ -1,0 +1,21 @@
+{
+  "extends": "expo/tsconfig.base.json",
+  "references": [
+    {
+      "path": "../../packages/core"
+    }
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "moduleResolution": "bundler",
+    "paths": {
+      "@hyper-space-wave/core/*": [
+        "../packages/core/src/*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ]
+}

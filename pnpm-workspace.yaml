@@ -1,0 +1,9 @@
+packages:
+  - apps/*
+  - packages/*
+onlyBuiltDependencies:
+  - '@ffmpeg-installer/darwin-arm64'
+  - core-js
+  - cpu-features
+  - esbuild
+  - sharp
