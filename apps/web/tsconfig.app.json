@@ -1,14 +1,10 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "references": [{ "path": "../../packages/core" }],
+  "extends": ["../../tsconfig.base.json", "../../tsconfig.alias.json"],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "paths": {
-      "@hyper-space-wave/core/*": ["../core/src/*"]
-    }
+    "noEmit": true
   },
   "include": ["src"]
 }

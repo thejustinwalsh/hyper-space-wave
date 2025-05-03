@@ -5,6 +5,10 @@ export const measure: MeasureStart =
   process.env.NODE_ENV === 'production'
     ? () => () => {}
     : fn => {
+        if (typeof performance === 'undefined') {
+          return () => {};
+        }
+
         const start = performance.now();
         return () => {
           const end = performance.now();

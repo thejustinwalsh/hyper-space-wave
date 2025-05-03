@@ -31,6 +31,7 @@ export const Scene = () => {
   useEffect(() => {
     app.ticker.maxFPS = 60;
     spawnPlayer(
+      0,
       {x: 100, y: 100},
       {x: 28, y: 28, width: 8, height: 8},
       {x: 0, y: 0, width: app.renderer.width, height: app.renderer.height},

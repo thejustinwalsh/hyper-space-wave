@@ -12,10 +12,12 @@ import {
   WorldTraits,
 } from './traits';
 import * as xmath from '../util/xmath';
+import {IS_MOBILE} from '../util/constants';
 
 export function updatePointer(world: World, app: Application) {
   if (!world.has(WorldTraits.Pointer)) {
     world.add(WorldTraits.Pointer);
+    world.add(WorldTraits.Offset(IS_MOBILE ? {x: 0, y: -60} : {x: 0, y: 0}));
   }
 
   const x = Math.min(app.renderer.screen.width, Math.max(0, app.renderer.events.pointer.global.x));
@@ -25,10 +27,12 @@ export function updatePointer(world: World, app: Application) {
 
 export function updatePlayer(world: World) {
   const pointer = world.get(WorldTraits.Pointer) ?? {x: 0, y: 0};
-  world.query(Player, Position, Extent, Velocity).updateEach(([position, extent, velocity]) => {
+  const offset = world.get(WorldTraits.Offset) ?? {x: 0, y: 0};
+
+  world.query(Player, Position, Extent, Velocity).updateEach(([_, position, extent, velocity]) => {
     const target = {
-      x: pointer.x - extent.x - extent.width / 2,
-      y: pointer.y - extent.y - extent.height / 2,
+      x: pointer.x + offset.x - extent.x - extent.width / 2,
+      y: pointer.y + offset.y - extent.y - extent.height / 2,
     };
     const dir = xmath.sub(target, position);
     xmath.normalize(dir, dir);

@@ -8,29 +8,30 @@
     "dev:ios": "pnpm watch & pnpm ios",
     "dev:android": "pnpm watch & pnpm android",
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "build": "expo build",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "build": "expo run:ios --device",
     "watch": "cpx '../../packages/assets/dist/**/*.*' public --watch"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~4.0.1",
-    "expo": "^52.0.37",
-    "expo-router": "~4.0.17",
-    "expo-status-bar": "~2.0.1",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-native": "0.76.7",
-    "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5",
-    "expo-splash-screen": "~0.29.22"
+    "@expo/metro-runtime": "~5.0.4",
+    "expo": "^53.0.0",
+    "expo-router": "~5.0.3",
+    "expo-splash-screen": "~0.30.7",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.1",
+    "react-native-safe-area-context": "^5.4.0",
+    "react-native-web": "^0.20.0",
+    "react-native-webview": "13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@hyper-space-wave/assets": "workspace:*",
     "@hyper-space-wave/core": "workspace:*",
-    "@types/react": "~18.3.12",
+    "@types/react": "~19.0.10",
     "cpx2": "^8.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "~5.8.3"
   }
 }

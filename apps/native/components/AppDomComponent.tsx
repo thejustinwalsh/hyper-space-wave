@@ -3,6 +3,8 @@
 import {App} from '@hyper-space-wave/core';
 import type {DOMProps} from 'expo/dom';
 
+import './AppDomComponent.css';
+
 export type AppDOMComponentProps = {
   width?: number;
   height?: number;

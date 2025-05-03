@@ -3,8 +3,8 @@
   "compilerOptions": {
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "rootDir": "src",
-    "outDir": "dist",
-  },  
+    "outDir": "dist"
+  },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

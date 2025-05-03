@@ -17,12 +17,16 @@ export const actions = createActions(world => ({
     world.spawn(Enemy, Position({...position}));
   },
   spawnPlayer: (
+    id: number,
     position: ExtractSchema<typeof Position>,
     bounds: ExtractSchema<typeof Extent>,
     constraint: ExtractSchema<typeof Constraint>,
   ) => {
+    const player = world.query(Player).find(p => p.get(Player)?.id === id);
+    if (player) return;
+
     world.spawn(
-      Player,
+      Player({id}),
       Extent({...bounds}),
       Constraint({...constraint}),
       Position({...position}),

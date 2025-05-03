@@ -11,18 +11,18 @@
     "watch": "cpx '../../packages/assets/dist/**/*.*' public --watch"
   },
   "dependencies": {
-    "@pixi/react": "8.0.0-beta.16",
+    "@pixi/react": "^8.0.1",
     "koota": "^0.3.0",
     "pixi.js": "^8.2.6",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@hyper-space-wave/assets": "workspace:*",
     "@hyper-space-wave/core": "workspace:*",
-    "@types/react": "18.3.1",
-    "@types/react-dom": "18.3.1",
+    "@types/react": "~19.0.10",
+    "@types/react-dom": "~19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "cpx2": "^8.0.0",
     "eslint": "^9.21.0",

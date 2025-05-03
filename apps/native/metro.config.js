@@ -20,4 +20,10 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, 'node_modules'),
 ];
 
+config.transformer.getTransformOptions = () => ({
+  transform: {
+    experimentalImportSupport: true,
+  },
+});
+
 module.exports = config;
