@@ -18,6 +18,6 @@ export function useInstance<T extends Container>(entity: Entity) {
         entity.remove(Instance);
       }
     };
-  }, [instance]);
+  }, [entity, instance]);
   return ref;
 }
