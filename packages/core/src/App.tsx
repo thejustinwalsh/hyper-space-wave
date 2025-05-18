@@ -2,7 +2,7 @@ import {Application} from '@pixi/react';
 
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useApplication, useExtend} from '@pixi/react';
-import {AbstractRenderer, EventSystem, Sprite, Texture, TextureSource} from 'pixi.js';
+import {Container, EventSystem, Sprite, Texture, TextureSource} from 'pixi.js';
 import {useActions} from 'koota/react';
 import {useAssetManifest} from './hooks/useAssetManifest';
 
@@ -13,37 +13,50 @@ import ScrollingTilingSprite from './components/ScrollingTilingSprite';
 import {WorldProvider} from 'koota/react';
 import {Loot} from './components/Loot';
 import {Players} from './components/Players';
-
+import {Debug} from './components/Debug';
 import {world, systems} from './state/init';
 import {actions} from './state/actions';
 import {useSystems} from './hooks/useSystem';
 
 TextureSource.defaultOptions.scaleMode = 'nearest';
-AbstractRenderer.defaultOptions.roundPixels = true;
+//AbstractRenderer.defaultOptions.roundPixels = true;
 EventSystem.defaultEventFeatures.move = true;
 EventSystem.defaultEventFeatures.globalMove = true;
 
 export const Scene = () => {
-  const {app} = useApplication();
-  useSystems(systems);
-  const {spawnPlayer} = useActions(actions);
+  useExtend({Container});
 
-  useEffect(() => {
+  const {app} = useApplication();
+  const {setupCollisionGrid, spawnPlayer, spawnLoot} = useActions(actions);
+  useSystems(systems);
+
+  useMemo(() => {
     app.ticker.maxFPS = 60;
+    setupCollisionGrid(64, app.renderer.width + 32, app.renderer.height + 64, -16, -32);
     spawnPlayer(
       0,
       {x: 100, y: 100},
       {x: 28, y: 28, width: 8, height: 8},
       {x: 0, y: 0, width: app.renderer.width, height: app.renderer.height},
     );
-  }, [spawnPlayer]);
+  }, [app, setupCollisionGrid, spawnPlayer]);
 
   return (
-    <>
+    <pixiContainer
+      label="scene"
+      eventMode="static"
+      width={app.renderer.width}
+      height={app.renderer.height}
+      onPointerTap={() => {
+        const pointer = app.renderer.events.pointer.global;
+        spawnLoot(pointer, {x: 0, y: 0, width: 32, height: 32});
+      }}
+    >
       <BackgroundSprite />
       <Players />
       <Loot />
-    </>
+      <Debug />
+    </pixiContainer>
   );
 };
 
@@ -54,7 +67,7 @@ export const BackgroundSprite = () => {
 
   const texture = useMemo(() => {
     return bundle?.['background-vertical-seamless'] ?? Texture.EMPTY;
-  }, [isLoaded]);
+  }, [bundle]);
 
   return (
     <>

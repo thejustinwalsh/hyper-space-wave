@@ -5,6 +5,7 @@ import {
   Extent,
   Gravity,
   Instance,
+  OutOfBounds,
   Player,
   Position,
   Velocity,
@@ -87,8 +88,14 @@ export function applyConstraints(world: World) {
   });
 }
 
-export function updateInstance(world: World, _app: Application, _deltaTime: number) {
+export function updateInstance(world: World) {
   world.query(Position, Instance).updateEach(([position, instance]) => {
     instance.ref.position.set(position.x, position.y);
+  });
+}
+
+export function pruneOutOfBounds(world: World) {
+  world.query(OutOfBounds).updateEach((_, entity) => {
+    entity.destroy();
   });
 }

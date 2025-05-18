@@ -1,12 +1,14 @@
 import {createWorld} from 'koota';
 import {
   applyConstraints,
+  pruneOutOfBounds,
   updateInstance,
   updatePlayer,
   updatePointer,
   updatePosition,
   updateVelocity,
 } from './systems';
+import {updateCollisions} from './collision';
 
 // World Singleton
 // @ts-expect-error: store world on globalThis for HMR
@@ -18,5 +20,7 @@ export const systems = [
   updatePosition,
   updateVelocity,
   applyConstraints,
+  updateCollisions,
   updateInstance,
+  pruneOutOfBounds,
 ];

@@ -1,5 +1,6 @@
 import {createActions, ExtractSchema} from 'koota';
 import {
+  Collider,
   Constraint,
   Enemy,
   Extent,
@@ -12,7 +13,23 @@ import {
   WorldTraits,
 } from './traits';
 import * as xmath from '../util/xmath';
+import {SpatialHash} from '../util/spatial-hash';
+
 export const actions = createActions(world => ({
+  setupCollisionGrid: (
+    cellSize: number,
+    width: number,
+    height: number,
+    x: number = 0,
+    y: number = 0,
+  ) => {
+    if (world.has(WorldTraits.CollisionGrid)) return;
+    world.add(
+      WorldTraits.CollisionGrid({
+        value: new SpatialHash({cellSize, width, height, x, y}),
+      }),
+    );
+  },
   spawnEnemy: (position: ExtractSchema<typeof Position>) => {
     world.spawn(Enemy, Position({...position}));
   },
@@ -29,11 +46,12 @@ export const actions = createActions(world => ({
       Player({id}),
       Extent({...bounds}),
       Constraint({...constraint}),
+      Collider({collidesWith: [Loot, Enemy], group: Player}),
       Position({...position}),
       Velocity({x: 0, y: 0}),
     );
   },
-  spawnLoot: (position: ExtractSchema<typeof Position>) => {
+  spawnLoot: (position: ExtractSchema<typeof Position>, bounds: ExtractSchema<typeof Extent>) => {
     const angle = 15;
     const speed = 8;
     const gravity = 0.2;
@@ -45,6 +63,8 @@ export const actions = createActions(world => ({
     world.spawn(
       Loot,
       Position({...position}),
+      Extent({...bounds}),
+      Collider({group: Loot}),
       Velocity({...vel}),
       VelocityMax({val: speed}),
       Gravity({x: 0, y: gravity}),

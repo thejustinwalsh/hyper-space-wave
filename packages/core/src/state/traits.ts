@@ -1,5 +1,6 @@
-import {trait} from 'koota';
+import {ConfigurableTrait, Entity, trait} from 'koota';
 import {Container, Texture, Spritesheet} from 'pixi.js';
+import {SpatialHash} from '../util/spatial-hash';
 
 export type ResourceType = 'image' | 'spritesheet';
 export type ResourceTypes = {
@@ -7,14 +8,35 @@ export type ResourceTypes = {
   spritesheet: Spritesheet;
 };
 
+// Tag traits
+export const Enemy = trait();
+export const Player = trait({id: 0});
+export const Loot = trait();
+export const Bullet = trait();
+
+// Physics traits
 export const Position = trait({x: 0, y: 0});
 export const Velocity = trait({x: 0, y: 0});
 export const VelocityMax = trait({val: 0});
 export const Gravity = trait({x: 0, y: 0});
 
+// Collision traits
 export const Extent = trait({x: 0, y: 0, width: 0, height: 0});
 export const Constraint = trait({x: 0, y: 0, width: 0, height: 0});
+export const Collider = trait<{group: ConfigurableTrait; collidesWith: ConfigurableTrait[]}>({
+  group: trait({}),
+  collidesWith: [],
+});
+export const Collision = trait<{
+  group: ConfigurableTrait;
+  others: {cell: number; entity: Entity; group: ConfigurableTrait}[];
+}>({
+  group: trait({}),
+  others: [],
+});
+export const OutOfBounds = trait();
 
+// Instance rendering traits
 export const Instance = trait<{ref: Container}>({ref: new Container({label: 'DefaultInstance'})});
 
 export const Resource = trait<{bundle: string; url: string; type: ResourceType}>({
@@ -23,13 +45,9 @@ export const Resource = trait<{bundle: string; url: string; type: ResourceType}>
   type: 'image',
 });
 
-export const Enemy = trait();
-
-export const Player = trait({id: 0});
-
-export const Loot = trait();
-
+// World traits
 export const WorldTraits = Object.freeze({
   Pointer: trait({x: 0, y: 0}),
   Offset: trait({x: 0, y: 0}),
+  CollisionGrid: trait<{value: SpatialHash}>({value: new SpatialHash()}),
 });

@@ -6,6 +6,7 @@ import {useExtend} from '@pixi/react';
 import {useInstance} from '../hooks/useInstance';
 import {useMemo} from 'react';
 import {useAssets} from '../hooks/useAssets';
+
 export function Loot() {
   const entities = useQuery(LootTrait);
   return (
