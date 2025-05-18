@@ -218,9 +218,11 @@ export const EPSILON = 1e-5;
  * Checks if two numbers are approximately equal within a given epsilon
  * @param a First number
  * @param b Second number
- * @param epsilon Maximum allowed difference
+ * @param epsilon Optional maximum allowed difference (defaults to EPSILON)
+ * @returns True if the numbers are approximately equal
  */
-const nearEqual = (a: number, b: number, epsilon: number): boolean => Math.abs(a - b) <= epsilon;
+export const nearEqual = (a: number, b: number, epsilon: number = EPSILON): boolean =>
+  Math.abs(a - b) <= epsilon;
 
 /**
  * Checks if two points are approximately equal within a given epsilon tolerance
@@ -230,7 +232,7 @@ const nearEqual = (a: number, b: number, epsilon: number): boolean => Math.abs(a
  * @returns True if the points are approximately equal
  */
 export const equals = (a: PointData, b: PointData, epsilon = EPSILON): boolean =>
-  nearEqual(a.x, b.x, epsilon) && nearEqual(a.y, b.y, epsilon);
+  distanceToSq(a, b) <= epsilon * epsilon;
 
 /**
  * Rotates a point by an angle in radians and stores the result in out
