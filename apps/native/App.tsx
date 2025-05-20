@@ -21,7 +21,7 @@ export function Dom() {
         top: -insets.top,
       },
     }),
-    [],
+    [insets],
   );
   const {width, height} = useMemo(() => Dimensions.get('screen'), []);
 
