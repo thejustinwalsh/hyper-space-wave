@@ -1,5 +1,14 @@
 import {useQuery, useWorld} from 'koota/react';
-import {Collision, Enemy, Extent, Loot, Player, Position, WorldTraits} from '../../state/traits';
+import {
+  Collision,
+  Enemy,
+  Extent,
+  Instance,
+  Loot,
+  Player,
+  Position,
+  WorldTraits,
+} from '../../state/traits';
 import {Container, Graphics, Sprite, Texture} from 'pixi.js';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useApplication, useExtend, useTick} from '@pixi/react';
@@ -17,7 +26,6 @@ const DEFAULT_ALPHA = 0.25; // Base alpha value for collision visualization
 export default function Debug() {
   const {app} = useApplication();
   useEffect(() => {
-    // @ts-expect-error: globalThis.__PIXI_APP__ is not typed
     globalThis.__PIXI_APP__ = app;
   }, [app]);
 
@@ -28,6 +36,7 @@ export default function Debug() {
 
   return (
     <>
+      <EntityStats />
       {grid && <CollisionGrid />}
       {extents && <CollisionExtents />}
     </>
@@ -88,6 +97,31 @@ type CollisionRef = {
 };
 
 function Collisions({grid}: {grid: SpatialHash}) {
+  const [_, setGridStats] = useControls('Grid Stats', () => {
+    return {
+      collisions: {
+        value: '',
+        label: 'collisions',
+        editable: false,
+      },
+      player: {
+        value: '',
+        label: <span style={{color: `${groupColor(Player, true)}`}}>player</span>,
+        editable: false,
+      },
+      loot: {
+        value: '',
+        label: <span style={{color: `${groupColor(Loot, true)}`}}>loot</span>,
+        editable: false,
+      },
+      enemy: {
+        value: '',
+        label: <span style={{color: `${groupColor(Enemy, true)}`}}>enemy</span>,
+        editable: false,
+      },
+    };
+  });
+
   const collisionRefs = useRef<Map<string, CollisionRef>>(new Map());
 
   const [collisionState, setCollisionState] = useState<
@@ -123,16 +157,16 @@ function Collisions({grid}: {grid: SpatialHash}) {
     // Update alphas and remove expired refs
     for (const [key, ref] of refs) {
       const age = now - ref.timestamp;
-      if (age > COLLISION_DURATION) {
-        refs.delete(key);
-        continue;
-      }
-
       const alpha =
         age < FADE_START
           ? DEFAULT_ALPHA
           : DEFAULT_ALPHA * (1 - (age - FADE_START) / (COLLISION_DURATION - FADE_START));
       ref.sprite.alpha = alpha;
+
+      if (age > COLLISION_DURATION) {
+        ref.sprite.alpha = 0;
+        refs.delete(key);
+      }
     }
   });
 
@@ -193,6 +227,24 @@ function Collisions({grid}: {grid: SpatialHash}) {
   useEffect(() => {
     const now = Date.now();
 
+    setGridStats({
+      collisions: collisions.reduce((acc, c) => acc + c.others.length, 0).toString(),
+      ...Object.fromEntries(
+        Object.entries(
+          collisions.reduce(
+            (acc, c) => {
+              acc[groupName(c.group)] = (acc[groupName(c.group)] ?? 0) + 1;
+              c.others.forEach(o => {
+                acc[groupName(o.group)] = (acc[groupName(o.group)] ?? 0) + 1;
+              });
+              return acc;
+            },
+            {player: 0, enemy: 0, loot: 0} as Record<string, number>,
+          ),
+        ).map(([key, value]) => [key, value.toString()]),
+      ),
+    });
+
     setCollisionState(previous => {
       const newMap = new Map(previous);
 
@@ -225,7 +277,7 @@ function Collisions({grid}: {grid: SpatialHash}) {
 
       return newMap;
     });
-  }, [collisions]);
+  }, [collisions, setGridStats]);
 
   const entries = Array.from(collisionState.entries());
 
@@ -331,9 +383,39 @@ function updateRefs(
   };
 }
 
-function groupColor(group: ConfigurableTrait) {
-  if (group === Player) return 0x0000ff;
-  if (group === Enemy) return 0xff0000;
-  if (group === Loot) return 0x00ff00;
-  return 0xcccccc;
+function EntityStats() {
+  const entities = useQuery(Instance);
+
+  const [_stats, setStats] = useControls('Entity Stats', () => {
+    return {
+      entities: {
+        value: '',
+        label: 'entities',
+        editable: false,
+      },
+    };
+  });
+
+  useEffect(() => {
+    setStats({
+      entities: entities.length.toFixed(0),
+    });
+  }, [entities, setStats]);
+
+  return null;
+}
+
+function groupColor(group: ConfigurableTrait, asString = false) {
+  let color = 0xcccccc;
+  if (group === Player) color = 0x0000ff;
+  if (group === Enemy) color = 0xff0000;
+  if (group === Loot) color = 0x00ff00;
+  return asString ? `#${color.toString(16).padStart(6, '0')}` : color;
+}
+
+function groupName(group: ConfigurableTrait) {
+  if (group === Player) return 'player';
+  if (group === Enemy) return 'enemy';
+  if (group === Loot) return 'loot';
+  return 'unknown';
 }
