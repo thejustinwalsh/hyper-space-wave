@@ -23,9 +23,9 @@ export const Gravity = trait({x: 0, y: 0});
 // Collision traits
 export const Extent = trait({x: 0, y: 0, width: 0, height: 0});
 export const Constraint = trait({x: 0, y: 0, width: 0, height: 0});
-export const Collider = trait<{group: ConfigurableTrait; collidesWith: ConfigurableTrait[]}>({
+export const Collider = trait<{group: ConfigurableTrait; collidesWith: Set<ConfigurableTrait>}>({
   group: trait({}),
-  collidesWith: [],
+  collidesWith: new Set(),
 });
 export const Collision = trait<{
   group: ConfigurableTrait;
@@ -37,7 +37,7 @@ export const Collision = trait<{
 export const OutOfBounds = trait();
 
 // Instance rendering traits
-export const Instance = trait<{ref: Container}>({ref: new Container({label: 'DefaultInstance'})});
+export const Instance = trait<{ref: Container | null}>({ref: null});
 
 export const Resource = trait<{bundle: string; url: string; type: ResourceType}>({
   bundle: '',

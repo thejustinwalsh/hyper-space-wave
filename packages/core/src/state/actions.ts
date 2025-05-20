@@ -46,7 +46,7 @@ export const actions = createActions(world => ({
       Player({id}),
       Extent({...bounds}),
       Constraint({...constraint}),
-      Collider({collidesWith: [Loot, Enemy], group: Player}),
+      Collider({collidesWith: new Set([Loot, Enemy]), group: Player}),
       Position({...position}),
       Velocity({x: 0, y: 0}),
     );

@@ -1,5 +1,4 @@
 import {Entity, ExtractSchema, World} from 'koota';
-import {Application} from 'pixi.js';
 import {Collider, Collision, Extent, OutOfBounds, Position, WorldTraits} from './traits';
 import {SpatialHash} from '../util/spatial-hash';
 import {assert} from '../util/assert';
@@ -37,7 +36,7 @@ const checkEntityCollisions = (
   grid: SpatialHash,
 ) => {
   const potentialCollisions = grid.query(position, extent);
-  if (potentialCollisions.size === 0) return;
+  if (potentialCollisions.length === 0) return;
 
   const collisions: Array<{
     cell: number;
@@ -45,16 +44,15 @@ const checkEntityCollisions = (
     group: ExtractSchema<typeof Collider>['group'];
   }> = [];
 
-  potentialCollisions.forEach((collision, other) => {
-    if (!collider.collidesWith.includes(collision.group)) return;
+  for (const {entity: other, cell, group} of potentialCollisions) {
+    if (!collider.collidesWith.has(group)) continue;
 
     const otherPosition = assert(other.get(Position));
     const otherExtent = assert(other.get(Extent));
-
     if (checkOverlap(position, extent, otherPosition, otherExtent)) {
-      collisions.push({cell: collision.cell, entity: other, group: collision.group});
+      collisions.push({cell: cell, entity: other, group});
     }
-  });
+  }
 
   if (collisions.length > 0) {
     if (entity.has(Collision)) {
@@ -70,7 +68,7 @@ const checkEntityCollisions = (
   }
 };
 
-export const updateCollisions = (world: World, _: Application) => {
+export const updateCollisions = (world: World) => {
   const collisionGrid = assert(
     world.get(WorldTraits.CollisionGrid)?.value,
     'Collision grid not initialized',
@@ -80,20 +78,27 @@ export const updateCollisions = (world: World, _: Application) => {
   collisionGrid.clear();
   const entities = world.query(Position, Extent, Collider);
 
-  // First pass: Insert all entities into the grid
-  entities.updateEach(([position, extent, collider], entity: Entity) => {
+  // First pass: Insert all entities into the grid (and remove existing traits)
+  for (const entity of entities) {
+    const position = assert(entity.get(Position));
+    const extent = assert(entity.get(Extent));
+    const collider = assert(entity.get(Collider));
+
     // Remove existing collision traits
     entity.remove(Collision, OutOfBounds);
 
-    // Insert into grid
+    // Insert into grid and add out of bounds trait if failed
     const inserted = collisionGrid.insert(entity, collider.group, position, extent);
     if (!inserted) {
       entity.add(OutOfBounds());
     }
-  });
+  }
 
   // Second pass: Check all collisions after all entities are in the grid
-  entities.updateEach(([position, extent, collider], entity: Entity) => {
+  for (const entity of entities) {
+    const position = assert(entity.get(Position));
+    const extent = assert(entity.get(Extent));
+    const collider = assert(entity.get(Collider));
     checkEntityCollisions(entity, collider, position, extent, collisionGrid);
-  });
+  }
 };

@@ -1,7 +1,9 @@
 import {ConfigurableTrait, Entity, ExtractSchema} from 'koota';
 import {Position, Extent} from '../state/traits';
+import {XArray} from './xarray';
 
-export type SpatialHashCell = Map<Entity, ConfigurableTrait>;
+export type SpatialHashItem = {entity: Entity; cell: number; group: ConfigurableTrait};
+export type SpatialHashCell = Map<Entity, SpatialHashItem>;
 
 export interface SpatialHashConfig {
   cellSize: number;
@@ -14,7 +16,7 @@ export interface SpatialHashConfig {
 export class SpatialHash {
   private config: SpatialHashConfig & {x: number; y: number; cols: number; rows: number};
 
-  private cells: SpatialHashCell[];
+  private cells: XArray.FixedArray<SpatialHashCell>;
   private cols: number;
   private rows: number;
 
@@ -28,9 +30,9 @@ export class SpatialHash {
       cols: this.cols,
       rows: this.rows,
     };
-    this.cells = Array.from(
-      {length: this.cols * this.rows},
-      () => new Map<Entity, ConfigurableTrait>(),
+    this.cells = new XArray.FixedArray<SpatialHashCell>(
+      this.cols * this.rows,
+      () => new Map<Entity, SpatialHashItem>(),
     );
   }
 
@@ -39,7 +41,7 @@ export class SpatialHash {
   }
 
   clear(): void {
-    this.cells.forEach(cell => cell.clear());
+    this.cells.clear(cell => cell.clear());
   }
 
   getCellIndex(col: number, row: number): number {
@@ -87,7 +89,7 @@ export class SpatialHash {
   ): boolean {
     const indices = this.getCellsForBounds(position, extent);
     indices.forEach(index => {
-      this.cells[index].set(entity, group);
+      this.cells.get(index).set(entity, {entity, cell: index, group});
     });
     return indices.length > 0;
   }
@@ -95,17 +97,14 @@ export class SpatialHash {
   query(
     position: ExtractSchema<typeof Position>,
     extent: ExtractSchema<typeof Extent>,
-  ): Map<Entity, {cell: number; group: ConfigurableTrait}> {
-    const result = new Map<Entity, {cell: number; group: ConfigurableTrait}>();
+  ): Iterable<{entity: Entity; cell: number; group: ConfigurableTrait}> & {length: number} {
+    const results: SpatialHashItem[] = [];
     this.getCellsForBounds(position, extent).forEach(index => {
-      this.cells[index].forEach((group, entity) =>
-        result.set(entity, {
-          cell: index,
-          group,
-        }),
-      );
+      for (const [_, item] of this.cells.get(index)) {
+        results.push(item);
+      }
     });
-    return result;
+    return results;
   }
 
   remove(
@@ -114,7 +113,7 @@ export class SpatialHash {
     extent: ExtractSchema<typeof Extent>,
   ): void {
     this.getCellsForBounds(position, extent).forEach(index => {
-      this.cells[index].delete(entity);
+      this.cells.get(index).delete(entity);
     });
   }
 }

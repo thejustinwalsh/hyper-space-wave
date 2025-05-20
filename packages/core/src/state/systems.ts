@@ -90,12 +90,12 @@ export function applyConstraints(world: World) {
 
 export function updateInstance(world: World) {
   world.query(Position, Instance).updateEach(([position, instance]) => {
-    instance.ref.position.set(position.x, position.y);
+    instance.ref?.position.set(position.x, position.y);
   });
 }
 
 export function pruneOutOfBounds(world: World) {
-  world.query(OutOfBounds).updateEach((_, entity) => {
+  for (const entity of world.query(OutOfBounds)) {
     entity.destroy();
-  });
+  }
 }
