@@ -1,4 +1,6 @@
 declare global {
+  var __PIXI_APP__: Application;
+
   interface Window {
     __PIXI_DEV__: boolean;
   }
