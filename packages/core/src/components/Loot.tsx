@@ -11,11 +11,9 @@ export function Loot() {
   const entities = useQuery(LootTrait);
   return (
     <>
-      {entities
-        .filter(e => e.isAlive())
-        .map(entity => (
-          <LootEntity key={entity} entity={entity} />
-        ))}
+      {entities.map(entity => (
+        <LootEntity key={entity} entity={entity} />
+      ))}
     </>
   );
 }

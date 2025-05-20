@@ -11,11 +11,9 @@ export function Players() {
   const entities = useQuery(Player);
   return (
     <>
-      {entities
-        .filter(e => e.isAlive())
-        .map(entity => (
-          <PlayerEntity key={entity} entity={entity} />
-        ))}
+      {entities.map(entity => (
+        <PlayerEntity key={entity} entity={entity} />
+      ))}
     </>
   );
 }
