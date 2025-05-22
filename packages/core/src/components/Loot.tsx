@@ -4,7 +4,7 @@ import {Entity} from 'koota';
 import {Sprite, Spritesheet} from 'pixi.js';
 import {useExtend} from '@pixi/react';
 import {useInstance} from '../hooks/useInstance';
-import {useMemo} from 'react';
+import {memo, useMemo} from 'react';
 import {useAssets} from '../hooks/useAssets';
 
 export function Loot() {
@@ -18,7 +18,7 @@ export function Loot() {
   );
 }
 
-function LootEntity({entity}: {entity: Entity}) {
+export const LootEntity = memo(({entity}: {entity: Entity}) => {
   useExtend({Sprite});
 
   const label = useMemo(() => `loot-${entity}`, [entity]);
@@ -28,4 +28,5 @@ function LootEntity({entity}: {entity: Entity}) {
   const sprites = data?.sprites;
 
   return <pixiSprite label={label} ref={ref} texture={sprites?.textures['coin-gold.png']} />;
-}
+});
+LootEntity.displayName = 'LootEntity';

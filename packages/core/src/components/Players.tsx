@@ -4,7 +4,7 @@ import {useQuery} from 'koota/react';
 import {Entity} from 'koota';
 import {Player} from '../state/traits';
 import {useInstance} from '../hooks/useInstance';
-import {useMemo} from 'react';
+import {memo, useMemo} from 'react';
 import {useAssets} from '../hooks/useAssets';
 
 export function Players() {
@@ -18,7 +18,7 @@ export function Players() {
   );
 }
 
-function PlayerEntity({entity}: {entity: Entity}) {
+const PlayerEntity = memo(({entity}: {entity: Entity}) => {
   useExtend({Sprite});
 
   const label = useMemo(() => `player-${entity.get(Player)?.id ?? entity}`, [entity]);
@@ -28,4 +28,5 @@ function PlayerEntity({entity}: {entity: Entity}) {
   const sprites = data?.sprites;
 
   return <pixiSprite label={label} ref={ref} texture={sprites?.textures['player-red-1.png']} />;
-}
+});
+PlayerEntity.displayName = 'PlayerEntity';
