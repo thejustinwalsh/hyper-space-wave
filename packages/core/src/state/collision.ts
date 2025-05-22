@@ -2,31 +2,38 @@ import {Entity, ExtractSchema, World} from 'koota';
 import {Collider, Collision, Extent, OutOfBounds, Position, WorldTraits} from './traits';
 import {SpatialHash} from '../util/spatial-hash';
 import {assert} from '../util/assert';
+import * as xmath from '../util/xmath';
 
-const checkOverlap = (
-  pos1: {x: number; y: number},
-  ext1: {x: number; y: number; width: number; height: number},
-  pos2: {x: number; y: number},
-  ext2: {x: number; y: number; width: number; height: number},
+export const checkAABBOverlap = (
+  posA: ExtractSchema<typeof Position>,
+  extA: ExtractSchema<typeof Extent>,
+  posB: ExtractSchema<typeof Position>,
+  extB: ExtractSchema<typeof Extent>,
 ): boolean => {
-  const left1 = pos1.x + ext1.x;
-  const right1 = left1 + ext1.width;
-  const top1 = pos1.y + ext1.y;
-  const bottom1 = top1 + ext1.height;
-
-  const left2 = pos2.x + ext2.x;
-  const right2 = left2 + ext2.width;
-  const top2 = pos2.y + ext2.y;
-  const bottom2 = top2 + ext2.height;
-
-  // Early exit conditions
-  if (right1 < left2) return false;
-  if (left1 > right2) return false;
-  if (bottom1 < top2) return false;
-  if (top1 > bottom2) return false;
+  if (posA.x + extA.maxX < posB.x + extB.minX) return false;
+  if (posA.x + extA.minX > posB.x + extB.maxX) return false;
+  if (posA.y + extA.maxY < posB.y + extB.minY) return false;
+  if (posA.y + extA.minY > posB.y + extB.maxY) return false;
 
   return true;
 };
+
+export const checkCircleOverlap = (() => {
+  const [worldPosA, worldPosB] = xmath.points(2);
+
+  return (
+    posA: ExtractSchema<typeof Position>,
+    extA: ExtractSchema<typeof Extent>,
+    posB: ExtractSchema<typeof Position>,
+    extB: ExtractSchema<typeof Extent>,
+  ) => {
+    xmath.add(posA, extA.pivot, worldPosA);
+    xmath.add(posB, extB.pivot, worldPosB);
+    const distance = xmath.distanceToSq(worldPosA, worldPosB);
+    const radius = extA.radius + extB.radius;
+    return distance <= radius * radius;
+  };
+})();
 
 const checkEntityCollisions = (
   entity: Entity,
@@ -49,7 +56,7 @@ const checkEntityCollisions = (
 
     const otherPosition = assert(other.get(Position));
     const otherExtent = assert(other.get(Extent));
-    if (checkOverlap(position, extent, otherPosition, otherExtent)) {
+    if (checkAABBOverlap(position, extent, otherPosition, otherExtent)) {
       collisions.push({cell: cell, entity: other, group});
     }
   }

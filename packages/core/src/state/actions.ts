@@ -4,7 +4,9 @@ import {
   Constraint,
   Enemy,
   Extent,
+  ExtractInitializer,
   Gravity,
+  Instance,
   Loot,
   Player,
   Position,
@@ -36,7 +38,7 @@ export const actions = createActions(world => ({
   spawnPlayer: (
     id: number,
     position: ExtractSchema<typeof Position>,
-    bounds: ExtractSchema<typeof Extent>,
+    bounds: ExtractInitializer<typeof Extent>,
     constraint: ExtractSchema<typeof Constraint>,
   ) => {
     const player = world.query(Player).find(p => p.get(Player)?.id === id);
@@ -44,14 +46,18 @@ export const actions = createActions(world => ({
 
     world.spawn(
       Player({id}),
-      Extent({...bounds}),
+      Extent.from(bounds),
       Constraint({...constraint}),
       Collider({collidesWith: new Set([Loot, Enemy]), group: Player}),
       Position({...position}),
       Velocity({x: 0, y: 0}),
+      Instance({ref: null}),
     );
   },
-  spawnLoot: (position: ExtractSchema<typeof Position>, bounds: ExtractSchema<typeof Extent>) => {
+  spawnLoot: (
+    position: ExtractSchema<typeof Position>,
+    bounds: ExtractInitializer<typeof Extent>,
+  ) => {
     const angle = 15;
     const speed = 8;
     const gravity = 0.2;
@@ -63,11 +69,12 @@ export const actions = createActions(world => ({
     world.spawn(
       Loot,
       Position({...position}),
-      Extent({...bounds}),
+      Extent.from(bounds),
       Collider({group: Loot}),
       Velocity({...vel}),
       VelocityMax({val: speed}),
       Gravity({x: 0, y: gravity}),
+      Instance({ref: null}),
     );
   },
   updatePointer: (position: ExtractSchema<typeof WorldTraits.Pointer>) => {

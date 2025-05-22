@@ -326,19 +326,17 @@ function CollisionExtents() {
   const collisionRefs = useRef<Map<number, Sprite>>(new Map());
   const collisionQuery = useQuery(Position, Extent);
   useTick(() => {
-    collisionQuery
-      .filter(entity => entity.isAlive())
-      .forEach(entity => {
-        const ref = collisionRefs.current.get(entity);
-        const position = assert(entity.get(Position));
-        const extent = assert(entity.get(Extent));
-        if (ref) {
-          ref.x = position.x + extent.x;
-          ref.y = position.y + extent.y;
-          ref.width = extent.width;
-          ref.height = extent.height;
-        }
-      });
+    collisionQuery.forEach(entity => {
+      const ref = collisionRefs.current.get(entity);
+      const position = assert(entity.get(Position));
+      const extent = assert(entity.get(Extent));
+      if (ref) {
+        ref.x = position.x + extent.x;
+        ref.y = position.y + extent.y;
+        ref.width = extent.width;
+        ref.height = extent.height;
+      }
+    });
   });
 
   const createDraw = useCallback((width: number, height: number) => {
