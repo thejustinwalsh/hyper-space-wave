@@ -423,6 +423,11 @@ function PerformanceStats() {
         label: 'sim fps',
         editable: false,
       },
+      dilation: {
+        value: '',
+        label: 'dilation',
+        editable: false,
+      },
       maxFPS: {
         value: app.ticker.maxFPS.toFixed(0),
         label: 'max fps',
@@ -437,9 +442,11 @@ function PerformanceStats() {
   });
 
   useTick(({FPS}) => {
+    const {fps, dilation} = world.get(WorldTraits.Delta) ?? {fps: FPS, dilation: 1};
     setPerfStats({
       fps: FPS.toFixed(0),
-      simFPS: world.get(WorldTraits.Delta)?.fps.toFixed(0) ?? FPS.toFixed(0),
+      dilation: dilation.toFixed(2),
+      simFPS: fps.toFixed(0),
       maxFPS: app.ticker.maxFPS.toFixed(0),
     });
   });

@@ -1,5 +1,5 @@
 import {ConfigurableTrait, Entity, trait} from 'koota';
-import {Texture, Spritesheet, Sprite, Graphics} from 'pixi.js';
+import {Texture, Spritesheet, Sprite, Graphics, AnimatedSprite} from 'pixi.js';
 import {SpatialHash} from '../util/spatial-hash';
 
 export type ExtractInitializer<T> = T extends {from: (...args: infer U) => unknown} ? U[0] : never;
@@ -77,7 +77,7 @@ export const Collision = trait<{
 export const OutOfBounds = trait();
 
 // Instance rendering traits
-export const Instance = trait<{ref: Sprite | Graphics | null}>({ref: null});
+export const Instance = trait<{ref: AnimatedSprite | Sprite | Graphics | null}>({ref: null});
 
 export const Resource = trait<{bundle: string; url: string; type: ResourceType}>({
   bundle: '',
@@ -90,5 +90,5 @@ export const WorldTraits = Object.freeze({
   Pointer: trait({x: 0, y: 0}),
   Offset: trait({x: 0, y: 0}),
   CollisionGrid: trait<{value: SpatialHash}>({value: new SpatialHash()}),
-  Delta: trait({deltaTime: 0, fps: 0}),
+  Delta: trait({deltaTime: 0, fps: 0, dilation: 1}),
 });
