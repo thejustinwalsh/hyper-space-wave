@@ -50,4 +50,5 @@ export const WorldTraits = Object.freeze({
   Pointer: trait({x: 0, y: 0}),
   Offset: trait({x: 0, y: 0}),
   CollisionGrid: trait<{value: SpatialHash}>({value: new SpatialHash()}),
+  Delta: trait({deltaTime: 0, fps: 0}),
 });
