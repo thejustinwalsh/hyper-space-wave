@@ -1,4 +1,9 @@
+import type {FixedLengthArray} from '../types';
 import type {PointData} from 'pixi.js';
+
+/**
+ * Math Library ❌ ~~allocations~~
+ */
 
 /**
  * Maps a number from one range to another
@@ -247,4 +252,15 @@ export const rotate = (a: PointData, theta: number, out: PointData = {x: 0, y: 0
   out.x = a.x * cos - a.y * sin;
   out.y = a.x * sin + a.y * cos;
   return out;
+};
+
+/**
+ * Creates an array of points with a fixed length
+ * Utility to create pools of points to pass into out params and avoid allocations
+ * @param count The number of points to create
+ * @returns An array of points
+ */
+export const points = <N extends number>(count: N) => {
+  const points = Array.from({length: count}, () => ({x: 0, y: 0}));
+  return points as FixedLengthArray<PointData, N>;
 };
