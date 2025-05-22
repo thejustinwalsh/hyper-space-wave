@@ -9,7 +9,7 @@ import {useAssetManifest} from './hooks/useAssetManifest';
 import manifest from '@hyper-space-wave/assets/manifest.json';
 import {useAssetBundle} from './hooks/useAssetBundle';
 import {Stats} from './components/Stats';
-import ScrollingTilingSprite from './components/ScrollingTilingSprite';
+import {ScrollingTilingSprite} from './components/ScrollingTilingSprite';
 import {WorldProvider} from 'koota/react';
 import {Loot} from './components/Loot';
 import {Players} from './components/Players';
@@ -17,9 +17,9 @@ import {Debug} from './components/Debug';
 import {world, systems} from './state/init';
 import {actions} from './state/actions';
 import {useSystems} from './hooks/useSystem';
+import {IS_MOBILE} from './util/constants';
 
 TextureSource.defaultOptions.scaleMode = 'nearest';
-//AbstractRenderer.defaultOptions.roundPixels = true;
 EventSystem.defaultEventFeatures.move = true;
 EventSystem.defaultEventFeatures.globalMove = true;
 
@@ -31,7 +31,6 @@ export const Scene = () => {
   useSystems(systems);
 
   useMemo(() => {
-    app.ticker.maxFPS = 60;
     setupCollisionGrid(64, app.renderer.width + 32, app.renderer.height + 64, -16, -32);
     spawnPlayer(
       0,
@@ -49,13 +48,19 @@ export const Scene = () => {
       height={app.renderer.height}
       onPointerTap={() => {
         const pointer = app.renderer.events.pointer.global;
-        spawnLoot(pointer, {x: 0, y: 0, width: 32, height: 32});
+        Array.from({length: 200}).forEach(() => {
+          const angle = Math.random() * Math.PI * 2;
+          const radius = Math.random() * 80 + 80;
+          const x = pointer.x + Math.cos(angle) * radius;
+          const y = pointer.y + Math.sin(angle) * radius;
+          spawnLoot({x, y}, {x: 0, y: 0, width: 32, height: 32});
+        });
       }}
     >
       <BackgroundSprite />
       <Players />
       <Loot />
-      <Debug />
+      {!IS_MOBILE && <Debug />}
     </pixiContainer>
   );
 };
