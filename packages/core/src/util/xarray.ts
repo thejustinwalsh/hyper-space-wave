@@ -1,4 +1,6 @@
-import {assert} from './assert';
+/**
+ * Arrays ❌ ~~allocations~~
+ */
 
 export namespace XArray {
   export class FixedArray<T> {
@@ -53,7 +55,6 @@ export namespace XArray {
     }
 
     get(index: number): T {
-      assert(index >= 0 && index < this._length, 'Index out of bounds');
       return this.items[index];
     }
 
