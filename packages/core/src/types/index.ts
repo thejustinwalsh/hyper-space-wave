@@ -1,3 +1,5 @@
+export type * from './util';
+
 import type {ResolvedAsset, UnresolvedAsset} from 'pixi.js';
 
 export type LoadedAssetState<T> = {
