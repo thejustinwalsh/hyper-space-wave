@@ -37,6 +37,7 @@ export default function Debug() {
   return (
     <>
       <EntityStats />
+      <PerformanceStats />
       {grid && <CollisionGrid />}
       {extents && <CollisionExtents />}
     </>
@@ -106,16 +107,19 @@ function Collisions({grid}: {grid: SpatialHash}) {
       },
       player: {
         value: '',
+        // eslint-disable-next-line react/jsx-no-literals
         label: <span style={{color: `${groupColor(Player, true)}`}}>player</span>,
         editable: false,
       },
       loot: {
         value: '',
+        // eslint-disable-next-line react/jsx-no-literals
         label: <span style={{color: `${groupColor(Loot, true)}`}}>loot</span>,
         editable: false,
       },
       enemy: {
         value: '',
+        // eslint-disable-next-line react/jsx-no-literals
         label: <span style={{color: `${groupColor(Enemy, true)}`}}>enemy</span>,
         editable: false,
       },
@@ -399,6 +403,46 @@ function EntityStats() {
       entities: entities.length.toFixed(0),
     });
   }, [entities, setStats]);
+
+  return null;
+}
+
+function PerformanceStats() {
+  const {app} = useApplication();
+  const world = useWorld();
+
+  const [_perfStats, setPerfStats] = useControls('Performance', () => {
+    return {
+      fps: {
+        value: '',
+        label: 'fps',
+        editable: false,
+      },
+      simFPS: {
+        value: '',
+        label: 'sim fps',
+        editable: false,
+      },
+      maxFPS: {
+        value: app.ticker.maxFPS.toFixed(0),
+        label: 'max fps',
+        min: 0,
+        max: 120,
+        step: 1,
+        onChange: (value: number) => {
+          app.ticker.maxFPS = value;
+        },
+      },
+    };
+  });
+
+  useTick(({FPS}) => {
+    setPerfStats({
+      fps: FPS.toFixed(0),
+      simFPS: world.get(WorldTraits.Delta)?.fps.toFixed(0) ?? FPS.toFixed(0),
+      maxFPS: app.ticker.maxFPS.toFixed(0),
+    });
+  });
 
   return null;
 }
