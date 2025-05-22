@@ -22,11 +22,11 @@ const PlayerEntity = memo(({entity}: {entity: Entity}) => {
   useExtend({Sprite});
 
   const label = useMemo(() => `player-${entity.get(Player)?.id ?? entity}`, [entity]);
-  const ref = useInstance<Sprite>(entity);
+  const {setRef} = useInstance<Sprite>(entity);
 
   const {data} = useAssets<Spritesheet>(['core/sprites']);
   const sprites = data?.sprites;
 
-  return <pixiSprite label={label} ref={ref} texture={sprites?.textures['player-red-1.png']} />;
+  return <pixiSprite label={label} ref={setRef} texture={sprites?.textures['player-red-1.png']} />;
 });
 PlayerEntity.displayName = 'PlayerEntity';

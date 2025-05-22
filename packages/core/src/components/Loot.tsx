@@ -22,11 +22,11 @@ export const LootEntity = memo(({entity}: {entity: Entity}) => {
   useExtend({Sprite});
 
   const label = useMemo(() => `loot-${entity}`, [entity]);
-  const ref = useInstance<Sprite>(entity);
+  const {setRef} = useInstance<Sprite>(entity);
 
   const {data} = useAssets<Spritesheet>(['core/sprites']);
   const sprites = data?.sprites;
 
-  return <pixiSprite label={label} ref={ref} texture={sprites?.textures['coin-gold.png']} />;
+  return <pixiSprite label={label} ref={setRef} texture={sprites?.textures['coin-gold.png']} />;
 });
 LootEntity.displayName = 'LootEntity';

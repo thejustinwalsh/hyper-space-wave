@@ -1,23 +1,19 @@
-import {useEffect} from 'react';
-
-import {useRef} from 'react';
+import {useCallback} from 'react';
 import {Instance} from '../state/traits';
 import {Entity} from 'koota';
-import {Container} from 'pixi.js';
+import {Sprite, Graphics} from 'pixi.js';
 
-export function useInstance<T extends Container>(entity: Entity) {
-  const ref = useRef<T>(null);
-
-  useEffect(() => {
-    if (ref.current && entity.isAlive() && !entity.has(Instance)) {
-      entity.add(Instance({ref: ref.current}));
-    }
-    return () => {
-      if (entity.isAlive() && entity.has(Instance)) {
-        entity.remove(Instance);
+export function useInstance<T extends Sprite | Graphics>(entity: Entity) {
+  const setRef = useCallback(
+    (ref: T | null) => {
+      if (ref) {
+        entity.set(Instance, {ref}, false);
+      } else {
+        entity.set(Instance, {ref: null}, false);
       }
-    };
-  }, [entity]);
+    },
+    [entity],
+  );
 
-  return ref;
+  return {setRef};
 }
