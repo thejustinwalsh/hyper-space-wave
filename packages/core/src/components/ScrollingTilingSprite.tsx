@@ -1,23 +1,28 @@
-import {useRef} from 'react';
+import {memo, useCallback, useRef} from 'react';
 import {TilingSprite} from 'pixi.js';
-import {useApplication, useExtend, useTick} from '@pixi/react';
+import {PixiElements, useApplication, useExtend} from '@pixi/react';
+import {useSimTick} from '../hooks/useSimTick';
 
-export type ScrollingTilingSpriteProps = JSX.IntrinsicElements['pixiTilingSprite'] & {
+export type ScrollingTilingSpriteProps = PixiElements['pixiTilingSprite'] & {
   scroll?: [number, number];
 };
 
-export default function ScrollingTilingSprite({scroll, ...props}: ScrollingTilingSpriteProps) {
+export const ScrollingTilingSprite = memo(({scroll, ...props}: ScrollingTilingSpriteProps) => {
   useExtend({TilingSprite});
 
   const {app} = useApplication();
   const ref = useRef<TilingSprite>(null);
 
-  useTick(() => {
-    ref.current?.tilePosition.set(
-      ref.current.tilePosition.x + (scroll?.[0] ?? 0),
-      ref.current.tilePosition.y + (scroll?.[1] ?? 0),
-    );
-  });
+  const update = useCallback(
+    (deltaTime: number) => {
+      ref.current?.tilePosition.set(
+        ref.current.tilePosition.x + (scroll?.[0] ?? 0) * deltaTime * 10,
+        ref.current.tilePosition.y + (scroll?.[1] ?? 0) * deltaTime * 10,
+      );
+    },
+    [scroll],
+  );
+  useSimTick(update);
 
   return (
     <pixiTilingSprite
@@ -28,4 +33,5 @@ export default function ScrollingTilingSprite({scroll, ...props}: ScrollingTilin
       {...props}
     />
   );
-}
+});
+ScrollingTilingSprite.displayName = 'ScrollingTilingSprite';
