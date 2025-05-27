@@ -90,16 +90,10 @@ const PlayerEntity = memo(({entity}: {entity: Entity}) => {
   );
 
   return (
-    <pixiContainer pivot={pivot} ref={setRef}>
-      <pixiAnimatedSprite
-        label={label}
-        anchor={0.5}
-        textures={player}
-        loop={false}
-        animationSpeed={1}
-      />
+    <pixiContainer label={label} ref={setRef} pivot={pivot}>
+      <pixiAnimatedSprite anchor={0.5} textures={player} loop={false} />
       <pixiContainer anchor={0.5} x={-10} y={10}>
-        <pixiAnimatedSprite anchor={0.5} textures={shadow} loop={false} animationSpeed={1} />
+        <pixiAnimatedSprite anchor={0.5} textures={shadow} loop={false} />
       </pixiContainer>
     </pixiContainer>
   );
