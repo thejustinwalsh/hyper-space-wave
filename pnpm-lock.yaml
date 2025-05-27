@@ -169,25 +169,44 @@ importers:
       koota:
         specifier: ^0.3.0
         version: 0.3.0(@types/react@19.0.14)(react@19.0.0)
-      leva:
-        specifier: ^0.10.0
-        version: 0.10.0(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      stats.js:
-        specifier: ^0.17.0
-        version: 0.17.0
     devDependencies:
       '@hyper-space-wave/assets':
         specifier: workspace:*
         version: link:../assets
+      '@hyper-space-wave/leva':
+        specifier: workspace:*
+        version: link:../leva
       '@pixi/react':
         specifier: ^8.0.1
         version: 8.0.1(@types/react@19.0.14)(pixi.js@8.9.1)(react@19.0.0)
+      leva:
+        specifier: ^0.10.0
+        version: 0.10.0(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       pixi.js:
         specifier: ^8.2.6
         version: 8.9.1
       react:
         specifier: 19.0.0
         version: 19.0.0
+      webgl-plot:
+        specifier: ^0.7.2
+        version: 0.7.2
+
+  packages/leva:
+    dependencies:
+      '@types/react':
+        specifier: ~19.0.10
+        version: 19.0.14
+    devDependencies:
+      leva:
+        specifier: ^0.10.0
+        version: 0.10.0(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react:
+        specifier: 19.0.0
+        version: 19.0.0
+      webgl-plot:
+        specifier: ^0.7.2
+        version: 0.7.2
 
 packages:
 
@@ -4913,9 +4932,6 @@ packages:
     resolution: {integrity: sha512-WjlahMgHmCJpqzU8bIBy4qtsZdU9lRlcZE3Lvyej6t4tuOuv1vk57OW3MBrj6hXBFx/nNoC9MPMTcr5YA7NQbg==}
     engines: {node: '>=6'}
 
-  stats.js@0.17.0:
-    resolution: {integrity: sha512-hNKz8phvYLPEcRkeG1rsGmV5ChMjKDAWU7/OJJdDErPBNChQXxCo3WZurGpnWc6gZhAzEPFad1aVgyOANH1sMw==}
-
   statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
     engines: {node: '>= 0.6'}
@@ -5341,6 +5357,9 @@ packages:
 
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
+
+  webgl-plot@0.7.2:
+    resolution: {integrity: sha512-QYtRa0+8h2N4h3g8yqIht4sKQYOLrS8FjpbG6mVkFvB8No+vGfMeGHx32A39Z6fzOGTsVZqwOf/ZJjK2VJU/ow==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -7785,10 +7804,10 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)':
+  '@typescript-eslint/eslint-plugin@8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3)
+      '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/scope-manager': 8.28.0
       '@typescript-eslint/type-utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
@@ -11274,8 +11293,6 @@ snapshots:
     dependencies:
       type-fest: 0.7.1
 
-  stats.js@0.17.0: {}
-
   statuses@1.5.0: {}
 
   statuses@2.0.1: {}
@@ -11545,7 +11562,7 @@ snapshots:
 
   typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
+      '@typescript-eslint/eslint-plugin': 8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       eslint: 9.23.0(jiti@2.4.2)
@@ -11698,6 +11715,8 @@ snapshots:
   wcwidth@1.0.1:
     dependencies:
       defaults: 1.0.4
+
+  webgl-plot@0.7.2: {}
 
   webidl-conversions@3.0.1: {}
 

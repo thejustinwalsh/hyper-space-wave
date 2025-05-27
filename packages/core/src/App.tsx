@@ -6,18 +6,18 @@ import {Container, EventSystem, Sprite, Texture, TextureSource} from 'pixi.js';
 import {useActions} from 'koota/react';
 import {useAssetManifest} from './hooks/useAssetManifest';
 
-import manifest from '@hyper-space-wave/assets/manifest.json';
 import {useAssetBundle} from './hooks/useAssetBundle';
-import {Stats} from './components/Stats';
 import {ScrollingTilingSprite} from './components/ScrollingTilingSprite';
 import {WorldProvider} from 'koota/react';
 import {Loot} from './components/Loot';
 import {Players} from './components/Players';
-import {Debug} from './components/Debug';
+import {Debug} from './debug';
 import {world, systems} from './state/init';
 import {actions} from './state/actions';
 import {useSystems} from './hooks/useSystem';
-import {IS_MOBILE} from './util/constants';
+import {AppTunnel} from './tunnels/AppTunnel';
+
+import manifest from '@hyper-space-wave/assets/manifest.json';
 
 TextureSource.defaultOptions.scaleMode = 'nearest';
 EventSystem.defaultEventFeatures.move = true;
@@ -60,7 +60,7 @@ export const Scene = () => {
       <BackgroundSprite />
       <Players />
       <Loot />
-      {!IS_MOBILE && <Debug />}
+      <Debug />
     </pixiContainer>
   );
 };
@@ -118,9 +118,11 @@ export function App({baseUrl, onReady, ...props}: AppProps) {
   }, [isReady, onReady]);
 
   return (
-    <Application onInit={handleInit} {...resolvedProps}>
-      <Stats />
-      <WorldProvider world={world}>{isReady && <Scene />}</WorldProvider>
-    </Application>
+    <>
+      <AppTunnel.Sink />
+      <Application onInit={handleInit} {...resolvedProps}>
+        <WorldProvider world={world}>{isReady && <Scene />}</WorldProvider>
+      </Application>
+    </>
   );
 }

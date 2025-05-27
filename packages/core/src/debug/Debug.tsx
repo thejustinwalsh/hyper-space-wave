@@ -8,15 +8,19 @@ import {
   Player,
   Position,
   WorldTraits,
-} from '../../state/traits';
+} from '../state/traits';
 import {Container, Graphics, Sprite, Texture} from 'pixi.js';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useApplication, useExtend, useTick} from '@pixi/react';
-import {assert} from '../../util/assert';
-import {SpatialHash} from '../../util/spatial-hash';
-import {ConfigurableTrait} from 'koota';
-import {Entity} from 'koota';
-import {useControls} from 'leva';
+import {Entity, ConfigurableTrait} from 'koota';
+import {Leva, useControls} from 'leva';
+
+import {plotXY} from '@hyper-space-wave/leva';
+import {AppTunnel} from '../tunnels/AppTunnel';
+import {assert} from '../util/assert';
+import {SpatialHash} from '../util/spatial-hash';
+import {XArray} from '../util/xarray';
+import * as xmath from '../util/xmath';
 
 // Collision visualization constants
 const COLLISION_DURATION = 1000; // 1 second total lifetime
@@ -36,6 +40,9 @@ export default function Debug() {
 
   return (
     <>
+      <AppTunnel.Source>
+        <Leva hideCopyButton />
+      </AppTunnel.Source>
       <EntityStats />
       <PerformanceStats />
       {grid && <CollisionGrid />}
@@ -411,6 +418,10 @@ function PerformanceStats() {
   const {app} = useApplication();
   const world = useWorld();
 
+  const [fpsBuffer, simBuffer] = useMemo(() => {
+    return [new XArray.CircularArray<number>(100), new XArray.CircularArray<number>(100)];
+  }, []);
+
   const [_perfStats, setPerfStats] = useControls('Performance', () => {
     return {
       fps: {
@@ -438,16 +449,23 @@ function PerformanceStats() {
           app.ticker.maxFPS = value;
         },
       },
+      plot: plotXY({
+        fps: Array.from(fpsBuffer),
+        sim: Array.from(simBuffer),
+      }),
     };
   });
 
   useTick(({FPS}) => {
     const {fps, dilation} = world.get(WorldTraits.Delta) ?? {fps: FPS, dilation: 1};
+    fpsBuffer.push(xmath.map(FPS, 0, 120, 0, 1) * 2 - 1);
+    simBuffer.push(xmath.map(fps, 0, 120, 0, 1) * 2 - 1);
     setPerfStats({
       fps: FPS.toFixed(0),
       dilation: dilation.toFixed(2),
       simFPS: fps.toFixed(0),
       maxFPS: app.ticker.maxFPS.toFixed(0),
+      plot: {fps: Array.from(fpsBuffer), sim: Array.from(simBuffer)},
     });
   });
 
