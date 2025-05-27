@@ -79,12 +79,6 @@ export const OutOfBounds = trait();
 // Instance rendering traits
 export const Instance = trait<{ref: AnimatedSprite | Sprite | Graphics | null}>({ref: null});
 
-export const Resource = trait<{bundle: string; url: string; type: ResourceType}>({
-  bundle: '',
-  url: '',
-  type: 'image',
-});
-
 // World traits
 export const WorldTraits = Object.freeze({
   Pointer: trait({x: 0, y: 0}),
