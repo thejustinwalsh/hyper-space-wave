@@ -8,19 +8,19 @@ import {
   Player,
   Position,
   WorldTraits,
-} from '../state/traits';
+} from '../../state/traits';
 import {Container, Graphics, Sprite, Texture} from 'pixi.js';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useApplication, useExtend, useTick} from '@pixi/react';
 import {Entity, ConfigurableTrait} from 'koota';
 import {Leva, useControls} from 'leva';
 
-import {plotXY} from '@hyper-space-wave/leva';
-import {AppTunnel} from '../tunnels/AppTunnel';
-import {assert} from '../util/assert';
-import {SpatialHash} from '../util/spatial-hash';
-import {XArray} from '../util/xarray';
-import * as xmath from '../util/xmath';
+import {plotXY, table} from '@hyper-space-wave/leva';
+import {AppTunnel} from '../../tunnels/AppTunnel';
+import {assert} from '../../util/assert';
+import {SpatialHash} from '../../util/spatial-hash';
+import {XArray} from '../../util/xarray';
+import * as xmath from '../../util/xmath';
 
 // Collision visualization constants
 const COLLISION_DURATION = 1000; // 1 second total lifetime
@@ -45,6 +45,7 @@ export default function Debug() {
       </AppTunnel.Source>
       <EntityStats />
       <PerformanceStats />
+      <WavesTable />
       {grid && <CollisionGrid />}
       {extents && <CollisionExtents />}
     </>
@@ -467,6 +468,60 @@ function PerformanceStats() {
       maxFPS: app.ticker.maxFPS.toFixed(0),
       plot: {fps: Array.from(fpsBuffer), sim: Array.from(simBuffer)},
     });
+  });
+
+  return null;
+}
+
+function WavesTable() {
+  const [columns, data] = useMemo(() => {
+    const columns = [
+      {
+        accessorKey: 'id',
+        header: 'ID',
+        size: 30,
+      },
+      {
+        accessorKey: 'wave',
+        header: 'Wave',
+        size: 60,
+        meta: {
+          editable: true,
+        },
+      },
+      {
+        accessorKey: 'speed',
+        header: 'Speed',
+        size: 60,
+        meta: {
+          editable: true,
+        },
+      },
+      {
+        accessorKey: 'drops',
+        header: 'Drops',
+        size: 60,
+        meta: {
+          editable: true,
+        },
+      },
+    ];
+    const data = Array.from({length: 100}, (_, i) => ({
+      id: i + 1,
+      wave: Array.from({length: 5}, () => ['X', ' '][Math.floor(Math.random() * 2)]).join(''),
+      speed: (Math.random() * 10).toFixed(2),
+      drops: Math.floor(Math.random() * 5),
+    }));
+    return [columns, data];
+  }, []);
+
+  const [_waves, _setWaves] = useControls('Waves', () => {
+    return {
+      table: table({
+        columns,
+        data,
+      }),
+    };
   });
 
   return null;

@@ -1,5 +1,5 @@
 import {useEffect, useRef} from 'react';
-import {debounce} from './util';
+import {debounce} from '../../util/debounce';
 
 export function useCanvas3D(
   fn: (canvas: HTMLCanvasElement, ctx: WebGLRenderingContext) => void,

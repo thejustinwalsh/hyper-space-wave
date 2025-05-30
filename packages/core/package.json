@@ -26,14 +26,16 @@
     "@hyper-space-wave/assets": "workspace:*",
     "@hyper-space-wave/leva": "workspace:*",
     "@pixi/react": "^8.0.1",
+    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-virtual": "^3.13.9",
     "leva": "^0.10.0",
-    "webgl-plot": "^0.7.2",
     "pixi.js": "^8.2.6",
-    "react": "19.0.0"
+    "react": "19.0.0",
+    "webgl-plot": "^0.7.2"
   },
   "dependencies": {
     "@types/react": "~19.0.10",
     "@zod/mini": "4.0.0-beta.20250424T163858",
-    "koota": "^0.3.0"
+    "koota": "^0.4.2"
   }
 }

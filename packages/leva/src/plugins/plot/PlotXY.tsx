@@ -1,6 +1,6 @@
 import {useCallback, useRef} from 'react';
 import {useInputContext, Components, styled} from 'leva/plugin';
-import {WebglThickLine, WebglPlot, ColorRGBA} from 'webgl-plot';
+import {WebglPlot, ColorRGBA, WebglLine} from 'webgl-plot';
 import type {Tracks, PlotXYSettings} from './types';
 import {fallbackColor} from './util';
 import {useCanvas3D} from './useCanvas3D';
@@ -11,7 +11,7 @@ export function PlotXY() {
     settings: PlotXYSettings;
   }>();
 
-  const plotter = useRef<{lines: Record<string, WebglThickLine>; wglp: WebglPlot} | null>(null);
+  const plotter = useRef<{lines: Record<string, WebglLine>; wglp: WebglPlot} | null>(null);
 
   const update = useCallback(
     (v: Tracks) => {
@@ -19,15 +19,18 @@ export function PlotXY() {
       const {lines, wglp} = plotter.current;
       Object.entries(lines).forEach(([track, line]) => {
         const arr = v[track] || [];
+        let smoothY = arr[0] ?? 0;
+        const alpha = settings?.smooth ? 0.2 : 1; // 1 disables smoothing
         for (let i = 0; i < line.numPoints; i++) {
           const bufferIndex = Math.round((i * (arr.length - 1)) / (line.numPoints - 1));
           const y = arr[bufferIndex] ?? 0;
-          line.setY(i, y);
+          smoothY = smoothY * (1 - alpha) + y * alpha;
+          line.setY(i, smoothY);
         }
       });
       wglp.update();
     },
-    [plotter],
+    [plotter, settings?.smooth],
   );
 
   const draw = useCallback(
@@ -37,7 +40,7 @@ export function PlotXY() {
 
       const numX = canvas.width;
       const wglp = new WebglPlot(canvas);
-      const lines: Record<string, WebglThickLine> = {};
+      const lines: Record<string, WebglLine> = {};
 
       // Determine track order
       const trackNames = settings?.sort?.length
@@ -45,11 +48,11 @@ export function PlotXY() {
         : Object.keys(value);
 
       trackNames.forEach((track, idx) => {
-        const colorArr = settings?.colors?.[track] ?? fallbackColor(idx, 0.33);
+        const colorArr = settings?.colors?.[track] ?? fallbackColor(idx);
         const color = new ColorRGBA(...colorArr);
-        const line = new WebglThickLine(color, numX, 0.05);
+        const line = new WebglLine(color, numX);
         line.lineSpaceX(-1, 2 / numX);
-        wglp.addThickLine(line);
+        wglp.addLine(line);
         lines[track] = line;
       });
 
