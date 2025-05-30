@@ -42,7 +42,7 @@ function useFixedTimestep(updateCallback: UpdateCallback) {
   }
 
   const update = useCallback(
-    (t: Ticker) => {
+    function useFixedTimestepUpdate(t: Ticker) {
       const currentTime = performance.now();
       const frameDelta = currentTime - state.current.lastUpdateTime;
       state.current.lastUpdateTime = currentTime;
@@ -127,7 +127,7 @@ export function useSystem(system: System) {
   const world = useWorld();
 
   const updateSystem = useCallback(
-    (deltaTime: number) => {
+    function updateSystemCallback(deltaTime: number) {
       const end = measure(system);
       system(world, app, deltaTime);
       end();
@@ -143,7 +143,7 @@ export function useSystems(systems: System[]) {
   const {app} = useApplication();
 
   const updateSystems = useCallback(
-    (deltaTime: number) => {
+    function updateSystemsCallback(deltaTime: number) {
       systems.forEach(system => {
         const end = measure(system);
         system(world, app, deltaTime);

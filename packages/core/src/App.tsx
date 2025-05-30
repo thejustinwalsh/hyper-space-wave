@@ -23,7 +23,7 @@ TextureSource.defaultOptions.scaleMode = 'nearest';
 EventSystem.defaultEventFeatures.move = true;
 EventSystem.defaultEventFeatures.globalMove = true;
 
-export const Scene = () => {
+export function Scene() {
   useExtend({Container});
 
   const {app} = useApplication();
@@ -63,9 +63,9 @@ export const Scene = () => {
       <Debug />
     </pixiContainer>
   );
-};
+}
 
-export const BackgroundSprite = () => {
+export function BackgroundSprite() {
   useExtend({Sprite});
 
   const {isLoaded, data: bundle} = useAssetBundle<Record<string, Texture>>('default');
@@ -79,7 +79,7 @@ export const BackgroundSprite = () => {
       {isLoaded && <ScrollingTilingSprite label="Background" texture={texture} scroll={[0, 1]} />}
     </>
   );
-};
+}
 
 type AppProps = {
   width?: number;
