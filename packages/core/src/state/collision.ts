@@ -3,6 +3,7 @@ import {Collider, Collision, Extent, OutOfBounds, Position, WorldTraits} from '.
 import {SpatialHash} from '../util/spatial-hash';
 import {assert} from '../util/assert';
 import * as xmath from '../util/xmath';
+import {XArray} from '../util/xarray';
 
 export const checkAABBOverlap = (
   posA: ExtractSchema<typeof Position>,
@@ -35,45 +36,48 @@ export const checkCircleOverlap = (() => {
   };
 })();
 
-const checkEntityCollisions = (
-  entity: Entity,
-  collider: ExtractSchema<typeof Collider>,
-  position: ExtractSchema<typeof Position>,
-  extent: ExtractSchema<typeof Extent>,
-  grid: SpatialHash,
-) => {
-  const potentialCollisions = grid.query(position, extent);
-  if (potentialCollisions.length === 0) return;
-
-  const collisions: Array<{
+const checkEntityCollisions = (() => {
+  const collisions: XArray.DynamicArray<{
     cell: number;
     entity: Entity;
     group: ExtractSchema<typeof Collider>['group'];
-  }> = [];
+  }> = new XArray.DynamicArray(1024);
 
-  for (const {entity: other, cell, group} of potentialCollisions) {
-    if (!collider.collidesWith.has(group)) continue;
+  return (
+    entity: Entity,
+    collider: ExtractSchema<typeof Collider>,
+    position: ExtractSchema<typeof Position>,
+    extent: ExtractSchema<typeof Extent>,
+    grid: SpatialHash,
+  ) => {
+    const potentialCollisions = grid.query(position, extent);
+    if (potentialCollisions.length === 0) return;
 
-    const otherPosition = assert(other.get(Position));
-    const otherExtent = assert(other.get(Extent));
-    if (checkAABBOverlap(position, extent, otherPosition, otherExtent)) {
-      collisions.push({cell: cell, entity: other, group});
+    collisions.clear();
+    for (const {entity: other, cell, group} of potentialCollisions) {
+      if (!collider.collidesWith.has(group)) continue;
+
+      const otherPosition = assert(other.get(Position));
+      const otherExtent = assert(other.get(Extent));
+      if (checkAABBOverlap(position, extent, otherPosition, otherExtent)) {
+        collisions.push({cell: cell, entity: other, group});
+      }
     }
-  }
 
-  if (collisions.length > 0) {
-    if (entity.has(Collision)) {
-      entity.get(Collision)!.others.push(...collisions);
-    } else {
-      entity.add(
-        Collision({
-          group: collider.group,
-          others: collisions,
-        }),
-      );
+    if (collisions.length > 0) {
+      if (entity.has(Collision)) {
+        entity.get(Collision)!.others.push(...collisions);
+      } else {
+        entity.add(
+          Collision({
+            group: collider.group,
+            others: [...collisions],
+          }),
+        );
+      }
     }
-  }
-};
+  };
+})();
 
 export const updateCollisions = (world: World) => {
   const collisionGrid = assert(
