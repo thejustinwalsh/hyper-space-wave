@@ -197,8 +197,8 @@ importers:
         specifier: 4.0.0-beta.20250424T163858
         version: 4.0.0-beta.20250424T163858
       koota:
-        specifier: ^0.4.2
-        version: 0.4.2(@types/react@19.0.14)(react@19.0.0)
+        specifier: ^0.4.4
+        version: 0.4.4(@types/react@19.0.14)(react@19.0.0)
     devDependencies:
       '@hyper-space-wave/assets':
         specifier: workspace:*
@@ -3980,8 +3980,8 @@ packages:
       react:
         optional: true
 
-  koota@0.4.2:
-    resolution: {integrity: sha512-a3Zdq68hvE5Xx3cNWsjuurEfmPZzoNnHm88/NSTCCglqazcX3q7PQ9Mf7M2ToU6ZGaz/rDfxYgbW5w598FZY4A==}
+  koota@0.4.4:
+    resolution: {integrity: sha512-s16FaN95xBvnq6a4I5+YNpmDX/BqyAh5nS3MCo+8HZ6uDNZtshg8aAehGKFljUUp4M0Uyf1dWl06wrnv29rEOw==}
     peerDependencies:
       '@types/react': ~19.0.10
       react: 19.0.0
@@ -8219,10 +8219,10 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@typescript-eslint/eslint-plugin@8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)':
+  '@typescript-eslint/eslint-plugin@8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)':
     dependencies:
       '@eslint-community/regexpp': 4.12.1
-      '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3)
+      '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/scope-manager': 8.28.0
       '@typescript-eslint/type-utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
@@ -10391,7 +10391,7 @@ snapshots:
       '@types/react': 19.0.14
       react: 19.0.0
 
-  koota@0.4.2(@types/react@19.0.14)(react@19.0.0):
+  koota@0.4.4(@types/react@19.0.14)(react@19.0.0):
     optionalDependencies:
       '@types/react': 19.0.14
       react: 19.0.0
@@ -12093,7 +12093,7 @@ snapshots:
 
   typescript-eslint@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3):
     dependencies:
-      '@typescript-eslint/eslint-plugin': 8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.8.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
+      '@typescript-eslint/eslint-plugin': 8.28.0(@typescript-eslint/parser@8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/parser': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       '@typescript-eslint/utils': 8.28.0(eslint@9.23.0(jiti@2.4.2))(typescript@5.7.3)
       eslint: 9.23.0(jiti@2.4.2)
