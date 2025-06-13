@@ -13,6 +13,7 @@ import {
 import type {TableProps, TableSettings} from './types';
 
 declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- interface augmentation
   interface ColumnMeta<TData extends RowData, TValue> {
     editable?: boolean;
     onChange?: (value: string, context: {rowIndex: number; columnId: string}) => void;
@@ -190,6 +191,23 @@ const TableWrapper = styled('div', {
   width: '100%',
   position: 'relative',
   overflow: 'auto',
+  "&::-webkit-scrollbar": {
+    width: '8px',
+    height: '8px',
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: '$elevation3',
+    borderRadius: '4px',
+  },
+  "&::-webkit-scrollbar-track": {
+    backgroundColor: 'transparent',
+  },
+  "&::-webkit-scrollbar-corner": {
+    backgroundColor: 'transparent',
+  },
+  "&::-webkit-scrollbar-button": {
+    display: 'none',
+  },
 });
 
 const TableSticky = styled('table', {
