@@ -19,8 +19,8 @@
   - Zod validation
   - Virtualized table
   - Live update
-- [ ] Asset Server (packages/assets)
+- [x] Asset Server (packages/assets)
   - Read and write json data assets in dev
-- [ ] HTTPS in dev
+- [x] HTTPS in dev
   - [auto-encrypt-localhost](https://codeberg.org/small-tech/auto-encrypt-localhost.git)
   - [vite-plugin-mkcert](https://github.com/liuweiGL/vite-plugin-mkcert/tree/main)

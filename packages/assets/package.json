@@ -11,10 +11,24 @@
     "./manifest.json": "./dist/manifest.json"
   },
   "scripts": {
+    "api:gen": "typed-openapi ./src/server/api.yaml -o ./src/server/api.ts -r zod",
     "build": "assetpack",
-    "dev": "assetpack -w"
+    "dev": "pnpm --filter assets run --stream /^dev:*/",
+    "dev:assetpack": "assetpack -w",
+    "dev:server": "tsx ./src/server/index.ts",
+    "start": "tsx watch ./src/server/index.ts"
   },
   "devDependencies": {
-    "@assetpack/core": "^1.4.0"
+    "@assetpack/core": "^1.4.0",
+    "@polka/parse": "1.0.0-next.0",
+    "@polka/send-type": "^0.5.2",
+    "@small-tech/auto-encrypt-localhost": "^8.4.0",
+    "@types/polka": "^0.5.7",
+    "effect": "^3.16.2",
+    "polka": "^0.5.2",
+    "sirv": "^3.0.1",
+    "tsx": "^4.19.4",
+    "typed-openapi": "^1.4.5",
+    "zod": "^3.25.53"
   }
 }

@@ -1,0 +1,14 @@
+type: workspace
+model: workspace
+id: wk_ptTVaiRpD2
+createdAt: 2025-06-05T19:18:16.432891
+updatedAt: 2025-06-05T19:18:16.432892
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: AssetsServer
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

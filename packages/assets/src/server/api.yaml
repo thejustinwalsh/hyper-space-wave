@@ -1,0 +1,30 @@
+openapi: '3.1.1'
+info:
+  title: Assets Server
+  version: '1.0'
+servers:
+  - url: https://localhost:5443
+paths:
+  /bundle:
+    description: Read and write files in your assets bundle
+    get:
+      description: Read a file from the path specified in the assets bundle
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+    post:
+      description: Write json data to the path specified in the assets bundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: OK
