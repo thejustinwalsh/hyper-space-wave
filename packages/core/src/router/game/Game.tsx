@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
 import {useApplication, useExtend} from '@pixi/react';
-import {Container} from 'pixi.js';
+import {Container, Rectangle} from 'pixi.js';
 import {useActions} from 'koota/react';
 import {Players} from '../../components/Players';
 import {Loot} from '../../components/Loot';
@@ -27,6 +27,7 @@ export function Game() {
       eventMode="static"
       width={app.renderer.width}
       height={app.renderer.height}
+      hitArea={new Rectangle(0, 0, app.renderer.width, app.renderer.height)}
       onPointerTap={() => {
         const pointer = app.renderer.events.pointer.global;
         Array.from({length: 200}).forEach(() => {
