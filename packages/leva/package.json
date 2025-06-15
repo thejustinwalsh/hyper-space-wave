@@ -19,7 +19,7 @@
   "description": "",
   "peerDependencies": {
     "leva": "^0.10.0",
-    "react": "19.0.0",
+    "react": "^19.0.0",
     "webgl-plot": "^0.7.2",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.9"
@@ -28,7 +28,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.9",
     "leva": "^0.10.0",
-    "react": "19.0.0",
+    "react": "^19.0.0",
     "webgl-plot": "^0.7.2"
   },
   "dependencies": {

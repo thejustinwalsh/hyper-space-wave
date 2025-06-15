@@ -18,21 +18,21 @@
   "license": "ISC",
   "description": "",
   "peerDependencies": {
-    "@pixi/react": "^8.0.1",
+    "@pixi/react": "^8.0.2",
     "pixi.js": "^8.2.6",
     "react": "19.0.0"
   },
   "devDependencies": {
     "@hyper-space-wave/assets": "workspace:*",
     "@hyper-space-wave/leva": "workspace:*",
-    "@pixi/react": "^8.0.1",
+    "@pixi/react": "^8.0.2",
     "@tanstack/eslint-plugin-router": "^1.120.17",
     "@tanstack/react-router": "^1.121.12",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.9",
     "leva": "^0.10.0",
     "pixi.js": "^8.2.6",
-    "react": "19.0.0",
+    "react": "^19.0.0",
     "webgl-plot": "^0.7.2",
     "koota": "^0.4.4"
   },
