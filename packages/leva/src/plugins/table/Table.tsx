@@ -111,7 +111,7 @@ export function Table<T>() {
                         transform: `translateY(${virtualRow.start - index * virtualRow.size}px)`,
                       }}
                     >
-                      {row.getVisibleCells().map(cell => {
+                      {row.getAllCells().map(cell => {
                         return (
                           <td key={cell.id}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -191,21 +191,21 @@ const TableWrapper = styled('div', {
   width: '100%',
   position: 'relative',
   overflow: 'auto',
-  "&::-webkit-scrollbar": {
+  '&::-webkit-scrollbar': {
     width: '8px',
     height: '8px',
   },
-  "&::-webkit-scrollbar-thumb": {
+  '&::-webkit-scrollbar-thumb': {
     backgroundColor: '$elevation3',
     borderRadius: '4px',
   },
-  "&::-webkit-scrollbar-track": {
+  '&::-webkit-scrollbar-track': {
     backgroundColor: 'transparent',
   },
-  "&::-webkit-scrollbar-corner": {
+  '&::-webkit-scrollbar-corner': {
     backgroundColor: 'transparent',
   },
-  "&::-webkit-scrollbar-button": {
+  '&::-webkit-scrollbar-button': {
     display: 'none',
   },
 });

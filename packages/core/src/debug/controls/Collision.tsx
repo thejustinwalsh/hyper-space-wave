@@ -1,9 +1,8 @@
 import {useQuery, useWorld} from 'koota/react';
 import {
-  Collision,
+  Collision as CollisionTrait,
   Enemy,
   Extent,
-  Instance,
   Loot,
   Player,
   Position,
@@ -11,28 +10,19 @@ import {
 } from '../../state/traits';
 import {Container, Graphics, Sprite, Texture} from 'pixi.js';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useApplication, useExtend, useTick} from '@pixi/react';
+import {useExtend, useTick} from '@pixi/react';
 import {Entity, ConfigurableTrait} from 'koota';
-import {Leva, useControls} from 'leva';
+import {useControls} from 'leva';
 
-import {plotXY, table} from '@hyper-space-wave/leva';
-import {AppTunnel} from '../../tunnels/AppTunnel';
 import {assert} from '../../util/assert';
 import {SpatialHash} from '../../util/spatial-hash';
-import {XArray} from '../../util/xarray';
-import * as xmath from '../../util/xmath';
 
 // Collision visualization constants
 const COLLISION_DURATION = 1000; // 1 second total lifetime
 const FADE_START = 800; // Start fading at 800ms
 const DEFAULT_ALPHA = 0.25; // Base alpha value for collision visualization
 
-export default function Debug() {
-  const {app} = useApplication();
-  useEffect(() => {
-    globalThis.__PIXI_APP__ = app;
-  }, [app]);
-
+export function Collision() {
   const {grid, extents} = useControls('Collision', {
     grid: {value: false},
     extents: {value: false},
@@ -40,12 +30,6 @@ export default function Debug() {
 
   return (
     <>
-      <AppTunnel.Source>
-        <Leva hideCopyButton />
-      </AppTunnel.Source>
-      <EntityStats />
-      <PerformanceStats />
-      <WavesTable />
       {grid && <CollisionGrid />}
       {extents && <CollisionExtents />}
     </>
@@ -95,7 +79,7 @@ function CollisionGrid() {
   return (
     <pixiContainer label="collision-grid">
       <pixiGraphics draw={draw} />
-      <Collisions grid={grid.value} />
+      <CollisionGridCells grid={grid.value} />
     </pixiContainer>
   );
 }
@@ -105,7 +89,7 @@ type CollisionRef = {
   timestamp: number;
 };
 
-function Collisions({grid}: {grid: SpatialHash}) {
+function CollisionGridCells({grid}: {grid: SpatialHash}) {
   const [_, setGridStats] = useControls('Grid Stats', () => {
     return {
       collisions: {
@@ -182,12 +166,12 @@ function Collisions({grid}: {grid: SpatialHash}) {
     }
   });
 
-  const collisionQuery = useQuery(Collision);
+  const collisionQuery = useQuery(CollisionTrait);
 
   const collisions = useMemo(() => {
     const {cellSize, x, y} = grid.getConfig();
     return collisionQuery.map(entity => {
-      const collision = assert(entity.get(Collision));
+      const collision = assert(entity.get(CollisionTrait));
       const position = entity.get(Position);
       const extent = entity.get(Extent);
 
@@ -391,140 +375,6 @@ function updateRefs(
       refs.current.delete(key);
     }
   };
-}
-
-function EntityStats() {
-  const entities = useQuery(Instance);
-
-  const [_stats, setStats] = useControls('Entity Stats', () => {
-    return {
-      entities: {
-        value: '',
-        label: 'entities',
-        editable: false,
-      },
-    };
-  });
-
-  useEffect(() => {
-    setStats({
-      entities: entities.length.toFixed(0),
-    });
-  }, [entities, setStats]);
-
-  return null;
-}
-
-function PerformanceStats() {
-  const {app} = useApplication();
-  const world = useWorld();
-
-  const [fpsBuffer, simBuffer] = useMemo(() => {
-    return [new XArray.CircularArray<number>(100), new XArray.CircularArray<number>(100)];
-  }, []);
-
-  const [_perfStats, setPerfStats] = useControls('Performance', () => {
-    return {
-      fps: {
-        value: '',
-        label: 'fps',
-        editable: false,
-      },
-      simFPS: {
-        value: '',
-        label: 'sim fps',
-        editable: false,
-      },
-      dilation: {
-        value: '',
-        label: 'dilation',
-        editable: false,
-      },
-      maxFPS: {
-        value: app.ticker.maxFPS.toFixed(0),
-        label: 'max fps',
-        min: 0,
-        max: 120,
-        step: 1,
-        onChange: (value: number) => {
-          app.ticker.maxFPS = value;
-        },
-      },
-      plot: plotXY({
-        fps: Array.from(fpsBuffer),
-        sim: Array.from(simBuffer),
-      }),
-    };
-  });
-
-  useTick(({FPS}) => {
-    const {fps, dilation} = world.get(WorldTraits.Delta) ?? {fps: FPS, dilation: 1};
-    fpsBuffer.push(xmath.map(FPS, 0, 120, 0, 1) * 2 - 1);
-    simBuffer.push(xmath.map(fps, 0, 120, 0, 1) * 2 - 1);
-    setPerfStats({
-      fps: FPS.toFixed(0),
-      dilation: dilation.toFixed(2),
-      simFPS: fps.toFixed(0),
-      maxFPS: app.ticker.maxFPS.toFixed(0),
-      plot: {fps: Array.from(fpsBuffer), sim: Array.from(simBuffer)},
-    });
-  });
-
-  return null;
-}
-
-function WavesTable() {
-  const [columns, data] = useMemo(() => {
-    const columns = [
-      {
-        accessorKey: 'id',
-        header: 'ID',
-        size: 30,
-      },
-      {
-        accessorKey: 'wave',
-        header: 'Wave',
-        size: 60,
-        meta: {
-          editable: true,
-        },
-      },
-      {
-        accessorKey: 'speed',
-        header: 'Speed',
-        size: 60,
-        meta: {
-          editable: true,
-        },
-      },
-      {
-        accessorKey: 'drops',
-        header: 'Drops',
-        size: 60,
-        meta: {
-          editable: true,
-        },
-      },
-    ];
-    const data = Array.from({length: 100}, (_, i) => ({
-      id: i + 1,
-      wave: Array.from({length: 5}, () => ['X', ' '][Math.floor(Math.random() * 2)]).join(''),
-      speed: (Math.random() * 10).toFixed(2),
-      drops: Math.floor(Math.random() * 5),
-    }));
-    return [columns, data];
-  }, []);
-
-  const [_waves, _setWaves] = useControls('Waves', () => {
-    return {
-      table: table({
-        columns,
-        data,
-      }),
-    };
-  });
-
-  return null;
 }
 
 function groupColor(group: ConfigurableTrait, asString = false) {
