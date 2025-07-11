@@ -9,7 +9,7 @@ import {Entities} from './controls/Entities';
 import {Performance} from './controls/Performance';
 import {Waves} from './controls/Waves';
 
-export default function DebugLevaControls() {
+export default function DebugControls() {
   const {app} = useApplication();
   useEffect(() => {
     globalThis.__PIXI_APP__ = app;
