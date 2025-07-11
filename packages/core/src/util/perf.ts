@@ -1,9 +1,11 @@
 type MeasureEnd = () => void;
 type MeasureStart = (fn: Function) => MeasureEnd;
 
+const noop = () => {};
+
 export const measure: MeasureStart =
   process.env.NODE_ENV === 'production'
-    ? () => () => {}
+    ? () => noop
     : fn => {
         if (typeof performance === 'undefined') {
           return () => {};
