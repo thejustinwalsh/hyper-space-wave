@@ -4,6 +4,7 @@ import {Container, Rectangle} from 'pixi.js';
 import {useActions} from 'koota/react';
 import {Players} from '../../components/Players';
 import {Loot} from '../../components/Loot';
+import {Enemies} from '../../components/Enemies';
 import {actions} from '../../state/actions';
 
 export function Game() {
@@ -40,6 +41,7 @@ export function Game() {
       }}
     >
       <Players />
+      <Enemies />
       <Loot />
     </pixiContainer>
   );

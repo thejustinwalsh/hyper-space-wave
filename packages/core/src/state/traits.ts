@@ -11,7 +11,11 @@ export type ResourceTypes = {
 };
 
 // Tag traits
-export const Enemy = trait();
+export const Enemy = trait({
+  type: 'enemy1' as 'enemy1' | 'enemy2' | 'enemy3' | 'enemy4' | 'enemy5',
+  health: 1,
+  maxHealth: 1,
+});
 export const Player = trait({id: 0});
 export const Loot = trait();
 export const Bullet = trait();
@@ -85,4 +89,27 @@ export const WorldTraits = Object.freeze({
   Offset: trait({x: 0, y: 0}),
   CollisionGrid: trait<{value: SpatialHash}>({value: new SpatialHash()}),
   Delta: trait({deltaTime: 0, fps: 0, dilation: 1}),
+  WaveScheduler: trait({
+    waves: [] as Array<{
+      id: number;
+      columns: string[][];
+      speed: number;
+      drops: number;
+      difficulty: number;
+    }>,
+    currentWaveIndex: 0,
+    waveTimer: 0,
+    waveInterval: 2000, // ms between waves
+    gameTime: 0,
+    isActive: false,
+    difficulty: 1,
+    scrollSpeed: 1,
+  }),
+  GameState: trait({
+    score: 0,
+    lives: 3,
+    level: 1,
+    isPlaying: false,
+    isPaused: false,
+  }),
 });

@@ -14,6 +14,7 @@ import {
 } from './traits';
 import * as xmath from '../util/xmath';
 import {IS_MOBILE} from '../util/constants';
+import {actions} from './actions';
 
 export function updatePointer(world: World, app: Application) {
   if (!world.has(WorldTraits.Pointer)) {
@@ -97,5 +98,45 @@ export function updateInstance(world: World) {
 export function pruneOutOfBounds(world: World) {
   for (const entity of world.query(OutOfBounds)) {
     entity.destroy();
+  }
+}
+
+export function updateWaveScheduler(world: World) {
+  const scheduler = world.get(WorldTraits.WaveScheduler);
+  const gameState = world.get(WorldTraits.GameState);
+  const delta = world.get(WorldTraits.Delta);
+
+  if (!scheduler || !scheduler.isActive || !delta) return;
+  if (gameState?.isPaused) return;
+
+  const deltaMs = delta.deltaTime * 1000;
+  const newGameTime = scheduler.gameTime + deltaMs;
+  const newWaveTimer = scheduler.waveTimer + deltaMs;
+
+  if (newWaveTimer >= scheduler.waveInterval) {
+    if (scheduler.currentWaveIndex < scheduler.waves.length) {
+      actions(world).spawnWave(scheduler.currentWaveIndex);
+
+      world.set(WorldTraits.WaveScheduler, {
+        ...scheduler,
+        currentWaveIndex: scheduler.currentWaveIndex + 1,
+        waveTimer: 0,
+        gameTime: newGameTime,
+      });
+    } else {
+      world.set(WorldTraits.WaveScheduler, {
+        ...scheduler,
+        currentWaveIndex: 0,
+        difficulty: Math.min(10, scheduler.difficulty + 1),
+        waveTimer: 0,
+        gameTime: newGameTime,
+      });
+    }
+  } else {
+    world.set(WorldTraits.WaveScheduler, {
+      ...scheduler,
+      gameTime: newGameTime,
+      waveTimer: newWaveTimer,
+    });
   }
 }

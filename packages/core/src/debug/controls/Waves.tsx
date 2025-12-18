@@ -1,57 +1,145 @@
-import {useMemo} from 'react';
-import {useControls} from 'leva';
+import {useMemo, useCallback} from 'react';
+import {useControls, button} from 'leva';
+import {useActions, useWorld} from 'koota/react';
+import {useTick} from '@pixi/react';
 
 import {table} from '@hyper-space-wave/leva';
+import {WorldTraits} from '../../state/traits';
+import {actions} from '../../state/actions';
+import {generateWaveSequence} from '../../util/wave-generator';
+import {useWorldTrait} from '../../hooks/useWorldTrait';
 
 export function Waves() {
-  const [columns, data] = useMemo(() => {
-    const columns = [
+  const world = useWorld();
+  const scheduler = useWorldTrait(WorldTraits.WaveScheduler);
+  const {isActive, waves} = scheduler ?? {isActive: false, waves: []};
+  const {loadWaves, startWaves, stopWaves} = useActions(actions);
+
+  const columns = useMemo(
+    () => [
       {
         accessorKey: 'id',
         header: 'ID',
         size: 30,
       },
       {
-        accessorKey: 'wave',
-        header: 'Wave',
-        size: 60,
-        meta: {
-          editable: true,
-        },
+        accessorKey: 'pattern',
+        header: 'Pattern',
+        size: 120,
       },
       {
         accessorKey: 'speed',
         header: 'Speed',
         size: 60,
-        meta: {
-          editable: true,
-        },
       },
       {
         accessorKey: 'drops',
         header: 'Drops',
         size: 60,
-        meta: {
-          editable: true,
-        },
       },
-    ];
-    const data = Array.from({length: 100}, (_, i) => ({
-      id: i + 1,
-      wave: Array.from({length: 5}, () => ['X', ' '][Math.floor(Math.random() * 2)]).join(''),
-      speed: (Math.random() * 10).toFixed(2),
-      drops: Math.floor(Math.random() * 5),
-    }));
-    return [columns, data];
-  }, []);
+      {
+        accessorKey: 'difficulty',
+        header: 'Diff',
+        size: 50,
+      },
+    ],
+    [],
+  );
 
-  const [_waves, _setWaves] = useControls('Waves', () => {
-    return {
-      table: table({
-        columns,
-        data,
-      }),
+  const getTableData = useCallback(() => {
+    if (scheduler && scheduler.waves.length > 0) {
+      return scheduler.waves.map(wave => {
+        // Show just the first row across all columns
+        const pattern = wave.columns
+          .map(col => {
+            const tile = col[0] || 'empty';
+            return tile.startsWith('enemy_') ? 'X' : tile === 'hazard_zone' ? 'H' : ' ';
+          })
+          .join('');
+
+        return {
+          id: wave.id,
+          pattern,
+          speed: wave.speed.toFixed(2),
+          drops: wave.drops,
+          difficulty: wave.difficulty,
+        };
+      });
+    }
+    return [{id: 0, pattern: 'No waves loaded', speed: '0.00', drops: 0, difficulty: 0}];
+  }, [scheduler]);
+
+  const [_waves, setWaves] = useControls(
+    'Waves',
+    () => {
+      return {
+        status: {
+          value: '',
+          label: 'Status',
+          editable: false,
+        },
+        currentWave: {
+          value: '',
+          label: 'Wave',
+          editable: false,
+        },
+        nextSpawn: {
+          value: '',
+          label: 'Next Spawn',
+          editable: false,
+        },
+        difficulty: {
+          value: 0,
+          label: 'Difficulty',
+          editable: false,
+        },
+        'Generate Waves': button(
+          () => {
+            const patterns = generateWaveSequence(1, 50);
+            loadWaves(patterns);
+          },
+          {disabled: isActive},
+        ),
+        'Start Waves': button(
+          () => {
+            startWaves(1);
+          },
+          {disabled: waves.length === 0},
+        ),
+        'Stop Waves': button(
+          () => {
+            stopWaves();
+          },
+          {disabled: !isActive},
+        ),
+        table: table({
+          columns,
+          data: getTableData(),
+        }),
+      };
+    },
+    [isActive, waves.length],
+  );
+
+  useTick(() => {
+    const {isActive, currentWaveIndex, waves, waveInterval, waveTimer, difficulty} = world.get(
+      WorldTraits.WaveScheduler,
+    ) ?? {
+      waves: [],
+      currentWaveIndex: 0,
+      waveTimer: 0,
+      waveInterval: 2000,
+      isActive: false,
+      difficulty: 1,
     };
+
+    setWaves({
+      status: isActive ? 'Running' : 'Stopped',
+      currentWave: `${currentWaveIndex} / ${waves.length}`,
+      nextSpawn: isActive ? `${((waveInterval - waveTimer) / 1000).toFixed(1)}s` : '-',
+      difficulty: difficulty,
+      table: getTableData(),
+    });
   });
 
   return null;

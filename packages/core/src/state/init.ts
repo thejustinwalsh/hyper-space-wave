@@ -7,6 +7,7 @@ import {
   updatePointer,
   updatePosition,
   updateVelocity,
+  updateWaveScheduler,
 } from './systems';
 import {updateCollisions} from './collision';
 
@@ -17,6 +18,7 @@ export const world = (globalThis.world = globalThis.world || createWorld());
 export const systems = [
   updatePointer,
   updatePlayer,
+  updateWaveScheduler,
   updatePosition,
   updateVelocity,
   applyConstraints,

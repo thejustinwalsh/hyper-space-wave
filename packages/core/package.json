@@ -30,11 +30,11 @@
     "@tanstack/react-router": "^1.121.12",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.13.9",
+    "koota": "^0.4.4",
     "leva": "^0.10.0",
     "pixi.js": "^8.2.6",
     "react": "^19.0.0",
-    "webgl-plot": "^0.7.2",
-    "koota": "^0.4.4"
+    "webgl-plot": "^0.7.2"
   },
   "dependencies": {
     "@types/react": "~19.0.10",

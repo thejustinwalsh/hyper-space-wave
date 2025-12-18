@@ -23,12 +23,13 @@ function RootContainer() {
   useExtend({Container});
 
   const {app} = useApplication();
-  const {setupCollisionGrid} = useActions(actions);
+  const {setupCollisionGrid, setupWaveScheduler} = useActions(actions);
   useSystems(systems);
 
   useMemo(() => {
-    setupCollisionGrid(64, app.renderer.width + 32, app.renderer.height + 64, -16, -32);
-  }, [app, setupCollisionGrid]);
+    setupCollisionGrid(64, app.renderer.width + 32, app.renderer.height + 164, -16, -132);
+    setupWaveScheduler();
+  }, [app, setupCollisionGrid, setupWaveScheduler]);
 
   return (
     <pixiContainer label="root" width={app.renderer.width} height={app.renderer.height}>
