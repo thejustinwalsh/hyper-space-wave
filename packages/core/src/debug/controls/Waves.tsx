@@ -69,7 +69,7 @@ export function Waves() {
     return [{id: 0, pattern: 'No waves loaded', speed: '0.00', drops: 0, difficulty: 0}];
   }, [scheduler]);
 
-  const [_waves, setWaves] = useControls(
+  const [wavesControl, setWaves] = useControls(
     'Waves',
     () => {
       return {
@@ -91,18 +91,20 @@ export function Waves() {
         difficulty: {
           value: 0,
           label: 'Difficulty',
-          editable: false,
+          editable: !isActive,
         },
         'Generate Waves': button(
-          () => {
-            const patterns = generateWaveSequence(1, 50);
+          get => {
+            const difficulty = get('Waves.difficulty');
+            const patterns = generateWaveSequence(difficulty, difficulty + 50);
             loadWaves(patterns);
           },
           {disabled: isActive},
         ),
         'Start Waves': button(
-          () => {
-            startWaves(1);
+          get => {
+            const difficulty = get('Waves.difficulty');
+            startWaves(difficulty);
           },
           {disabled: waves.length === 0},
         ),
@@ -130,14 +132,14 @@ export function Waves() {
       waveTimer: 0,
       waveInterval: 2000,
       isActive: false,
-      difficulty: 1,
+      difficulty: wavesControl.difficulty,
     };
 
     setWaves({
       status: isActive ? 'Running' : 'Stopped',
       currentWave: `${currentWaveIndex} / ${waves.length}`,
       nextSpawn: isActive ? `${((waveInterval - waveTimer) / 1000).toFixed(1)}s` : '-',
-      difficulty: difficulty,
+      ...(isActive ? {difficulty} : {}),
       table: getTableData(),
     });
   });
